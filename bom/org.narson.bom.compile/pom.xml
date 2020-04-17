@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.narson</groupId>
+		<artifactId>org.narson.reactor.bom</artifactId>
+		<version>${revision}</version>
+	</parent>
+
+	<artifactId>org.narson.bom.compile</artifactId>
+	<packaging>pom</packaging>
+
+	<name>Narson :: BOM :: Compile</name>
+	<description>This project defines a BOM file with the dependencies
+	 used to compile the Narson bundles. An OSGi repository index is created at
+	  build time and can be used to provision the resolver.</description>
+
+	<dependencies>
+		<!-- OSGi -->
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>osgi.core</artifactId>
+			<version>7.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>osgi.cmpn</artifactId>
+			<version>7.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>osgi.annotation</artifactId>
+			<version>7.0.0</version>
+		</dependency>
+
+		<!-- Java Servlet API -->
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.http.servlet-api</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+
+		<!-- Java API for RESTful Web Services -->
+		<dependency>
+			<groupId>org.apache.aries.spec</groupId>
+			<artifactId>org.apache.aries.javax.jax.rs-api</artifactId>
+			<version>1.0.4</version>
+		</dependency>
+
+		<!-- Java Persistence API -->
+		<dependency>
+			<groupId>org.apache.aries.jpa.javax.persistence</groupId>
+			<artifactId>javax.persistence_2.1</artifactId>
+			<version>2.7.2</version>
+		</dependency>
+
+		<!-- Jetty -->
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>websocket-servlet</artifactId>
+			<version>9.4.11.v20180605</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>websocket-api</artifactId>
+			<version>9.4.11.v20180605</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>websocket-client</artifactId>
+			<version>9.4.11.v20180605</version>
+		</dependency>
+		
+		<!-- The Gogo Shell -->
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.gogo.runtime</artifactId>
+			<version>1.1.2</version>
+		</dependency>		
+	</dependencies>
+	
+	<build>
+		<plugins> 
+			<plugin>
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>bnd-indexer-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

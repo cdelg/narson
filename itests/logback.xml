@@ -1,0 +1,23 @@
+<configuration>
+
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				%-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="Events.Bundle" level="OFF" />
+	<logger name="Events.Framework" level="OFF" />
+	<logger name="Events.Service" level="OFF" />
+	<logger name="LogService" level="OFF" />
+
+	<logger name="com.cloudtemple" level="OFF" />
+
+	<root level="OFF">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>

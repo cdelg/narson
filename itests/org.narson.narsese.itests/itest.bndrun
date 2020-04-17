@@ -1,0 +1,27 @@
+-include: ../itest-common.bndrun
+
+-runrequires: \
+	bnd.identity;id='org.narson.narsese.itests',\
+	bnd.identity;id='org.narson.narsese.provider'
+
+-runbundles: \
+	ch.qos.logback.classic;version='[1.2.3,1.2.4)',\
+	ch.qos.logback.core;version='[1.2.3,1.2.4)',\
+	junit-jupiter-api;version='[5.6.2,5.6.3)',\
+	junit-platform-commons;version='[1.6.2,1.6.3)',\
+	org.apache.felix.configadmin;version='[1.9.16,1.9.17)',\
+	org.apache.felix.logback;version='[1.0.0,1.0.1)',\
+	org.hamcrest;version='[2.2.0,2.2.1)',\
+	org.narson.api;version='[0.1.0,0.1.1)',\
+	org.narson.narsese.itests;version='[0.1.0,0.1.1)',\
+	org.opentest4j;version='[1.2.0,1.2.1)',\
+	slf4j.api;version='[1.7.25,1.7.26)',\
+	org.apache.felix.converter;version='[1.0.10,1.0.11)',\
+	org.apache.felix.scr;version='[2.1.16,2.1.17)',\
+	org.narson.narsese.provider;version='[0.1.0,0.1.1)',\
+	org.osgi.util.function;version='[1.1.0,1.1.1)',\
+	org.osgi.util.promise;version='[1.1.0,1.1.1)',\
+	junit-jupiter-engine;version='[5.6.2,5.6.3)',\
+	junit-platform-engine;version='[1.6.2,1.6.3)',\
+	junit-platform-launcher;version='[1.6.2,1.6.3)'
+	

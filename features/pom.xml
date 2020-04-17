@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.narson</groupId>
+		<artifactId>org.narson.reactor</artifactId>
+		<version>${revision}</version>
+	</parent>
+
+	<artifactId>org.narson.reactor.features</artifactId>
+	<packaging>pom</packaging>
+
+	<name>Narson :: Features</name>
+
+	<description>This project will build a set of features TODO.</description>
+
+	<modules>
+
+	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.narson</groupId>
+			<artifactId>org.narson.api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.narson</groupId>
+			<artifactId>org.narson.bom.compile</artifactId>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.narson</groupId>
+			<artifactId>org.narson.bom.bundles</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.narson</groupId>
+			<artifactId>org.narson.bom.runtime</artifactId>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.narson</groupId>
+			<artifactId>org.narson.bom.test</artifactId>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>bnd-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

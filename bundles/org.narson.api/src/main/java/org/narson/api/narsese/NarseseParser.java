@@ -1,0 +1,71 @@
+package org.narson.api.narsese;
+
+import java.io.Closeable;
+import java.util.NoSuchElementException;
+import org.osgi.annotation.versioning.ProviderType;
+
+
+@ProviderType
+public interface NarseseParser extends Closeable
+{
+  public enum Event
+  {
+    START_JUDGMENT,
+    START_GOAL,
+    START_QUESTION,
+    START_QUERY,
+    VALUE_PAST_TENSE,
+    VALUE_PRESENT_TENSE,
+    VALUE_FUTURE_TENSE,
+    VALUE_FREQUENCY,
+    VALUE_CONFIDENCE,
+    VALUE_CONSTANT,
+    VALUE_QUERY_VARIABLE,
+    START_DEPENDENT_VARIABLE,
+    VALUE_DEPENDENT_INDEPENDENT_VARIABLE,
+    VALUE_INDEPENDENT_VARIABLE,
+    START_INHERITANCE_COPULA,
+    START_SIMILARITY_COPULA,
+    START_IMPLICATION_COPULA,
+    START_EQUIVALENCE_COPULA,
+    START_INSTANCE_COPULA,
+    START_PROPERTY_COPULA,
+    START_INSTANCE_PROPERTY_COPULA,
+    START_PREDICTIVE_IMPLICATION_COPULA,
+    START_RETROSPECTIVE_IMPLICATION_COPULA,
+    START_CONCURRENT_IMPLICATION_COPULA,
+    START_PREDICTIVE_EQUIVALENCE_COPULA,
+    START_CONCURRENT_EQUIVALENCE_COPULA,
+    START_OPERATION,
+    START_EXTENSIONAL_SET,
+    START_INTENSIONAL_SET,
+    START_EXTENSIONAL_INTERSECTION,
+    START_INTENSIONAL_INTERSECTION,
+    START_EXTENSIONAL_DIFFERENCE,
+    START_INTENSIONAL_DIFFERENCE,
+    START_PRODUCT,
+    START_EXTENSIONAL_IMAGE,
+    START_INTENSIONAL_IMAGE,
+    VALUE_PLACEHOLDER,
+    START_NEGATION,
+    START_CONJUNCTION,
+    START_DISJUNCTION,
+    START_SEQUENTIAL_CONJUNCTION,
+    START_PARALLEL_CONJUNCTION,
+    END
+  }
+
+  NarseseLocation getLocation();
+
+  boolean hasNext() throws NarseseException, NarseseParsingException;
+
+  NarseseParser.Event next()
+      throws NarseseException, NarseseParsingException, NoSuchElementException;
+
+  String getString() throws IllegalStateException;
+
+  double getDouble() throws IllegalStateException;
+
+  @Override
+  void close() throws NarseseException;
+}

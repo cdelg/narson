@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.narson</groupId>
+		<artifactId>org.narson.reactor.bom</artifactId>
+		<version>${revision}</version>
+	</parent>
+
+	<artifactId>org.narson.bom.bundles</artifactId>
+	<packaging>pom</packaging>
+
+	<name>Narson :: BOM :: Bundles</name>
+	<description>This project defines a BOM file of the Narson bundles. An OSGi repository index is created at
+	  build time and can be used to provision the resolver.</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.narson</groupId>
+			<artifactId>org.narson.api</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.narson</groupId>
+			<artifactId>org.narson.narsese.provider</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>biz.aQute.bnd</groupId>
+				<artifactId>bnd-indexer-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>simple-local-index</id>
+						<goals>
+							<goal>local-index</goal>
+						</goals>
+						<phase>process-resources</phase>
+						<configuration>
+							<inputDir>${project.basedir}/../../bundles</inputDir>
+							<outputFile>${project.build.directory}/local-index.xml</outputFile>
+							<indexFiles>
+								<include>**/target/*.jar</include>
+								<exclude>**/target/*-javadoc.jar</exclude>
+								<exclude>**/target/*-sources.jar</exclude>
+							</indexFiles>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

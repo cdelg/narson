@@ -1,0 +1,118 @@
+//
+// Judgment
+//
+a.
+:\: a.
+:|: aa_b.
+:/:_a .
+a .%1;0.5  %
+:\: a.    %1;0.5  %
+  :|:aa. % 0.5 ; 0.5  %
+:/: aa.  % 0.5 ; 0.5  % 
+
+//
+// Question
+//
+a?
+:\: a?
+:|: aa?
+:/:aa2 ?
+
+//
+// Goal
+//
+a!
+aa!%0.5;0.5%
+
+//
+// Query
+//
+aa@
+
+//
+// Variables
+//
+??
+?.
+?a.
+?aa.
+#.
+#?
+#de().
+#de(aa aa bbb ).
+#a.
+#aa.
+
+//
+// Operation
+//
+(^o).
+(^o a).
+(^o aa bb).
+
+//
+// Relation
+//
+(a-->b).
+(a<->b).
+(a==>b).
+(a<=>b).
+(a{--b).
+(a--]b).
+(aa{-]b).
+(aa =/>b).
+(a =|> bb).
+(a=\>bb).
+(a </>b).
+(a<|> b).
+
+//
+// Compounds
+//
+{a}.
+{a b}.
+[a].
+[a b].
+!a.
+(! a).
+(/ a _ a).
+(/ a aa _).
+(/ aa aaa _ aaa).
+(/aa aaa  aaa _).
+(\ a _ a).
+(\ a aa _).
+(\ aa aaa _ aaa).
+(\aa aaa  aaa _).
+(& a a).
+(&aa aa).
+(aaa &aaa& aaa ).
+(&aaa aaa aaa aaa aaa ).
+(| a a).
+(|aa aa).
+(aaa| aaa| aaa ).
+(|aaa aaa aaa aaa aaa ).
+(&& a a).
+(&&aa aa).
+(aaa && aaa &&aaa ).
+(&&aaa aaa aaa aaa aaa ).
+(|| a a).
+(||aa aa).
+(aaa || aaa || aaa ).
+(||aaa aaa aaa aaa aaa ).
+(&| a a).
+(&|aa aa).
+(aaa &| aaa &| aaa ).
+(&|aaa aaa aaa aaa aaa ).
+(* a a).
+(*aa aa).
+(aaa * aaa* aaa ).
+(*aaa aaa aaa aaa aaa ).
+( a - a).
+(-aa aa).
+( a ~ a).
+(~aa aa).
+
+//
+// Complex
+//
+(aaa * (#aa &(^o aa #de(aa aa bbb ))& ? )* !aaa ).

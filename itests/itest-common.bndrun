@@ -1,0 +1,30 @@
+-standalone: \
+    target/index.xml;name="self",\
+    ../../bom/org.narson.bom.bundles/target/local-index.xml;name="bundles",\
+	../../bom/org.narson.bom.runtime/target/index.xml;name="runtime",\
+    ../../bom/org.narson.bom.test/target/index.xml;name="test"
+
+     
+-resolve.effective: resolve, active
+
+# Run all integration tests which are named xyzTest
+Test-Cases: ${classes;CONCRETE;PUBLIC;NAMED;*Test}
+
+-runsystempackages: sun.reflect,sun.misc, sun.security.x509, javax.annotation, javax.activation
+
+-runfw: org.eclipse.osgi
+
+-runee: JavaSE-1.8
+
+-runrequires.log: \
+	bnd.identity;id='org.apache.felix.logback'
+	
+-runrequires.junit:\
+	bnd.identity;id='junit-jupiter-engine',\
+	bnd.identity;id='junit-platform-launcher' 
+
+-runproperties: \
+	logback.configurationFile=../logback.xml,\
+	eclipse.log.enabled=false
+	
+-tester: biz.aQute.tester.junit-platform
