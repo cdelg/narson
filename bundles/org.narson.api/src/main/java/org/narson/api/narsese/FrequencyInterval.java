@@ -32,6 +32,13 @@ public interface FrequencyInterval
   double getIgnorance();
 
   /**
+   * Returns the the expectation value.
+   *
+   * @return the expectation value
+   */
+  double getExpectation();
+
+  /**
    * Convert this frequency interval to a truth value.
    *
    * @return the truth value version of this frequency interval

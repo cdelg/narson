@@ -84,4 +84,24 @@ public class EvidenceCountTest
         equalTo(3L));
     assertThat(v1.toFrequencyInterval(1).toEvidenceCount(1).getEvidenceCount(), equalTo(4L));
   }
+
+  @Test
+  public void testExpectation()
+  {
+    assertThrows(IllegalArgumentException.class,
+        () -> new EvidenceCountImpl(5, 6).getExpectation(0));
+    assertThrows(IllegalArgumentException.class,
+        () -> new EvidenceCountImpl(5, 6).getExpectation(-1));
+
+    v1 = new EvidenceCountImpl(3, 7);
+    assertThat(v1.getExpectation(1), closeTo(0.43, 0.01));
+
+    v1 = new EvidenceCountImpl(1, 2);
+    assertThat(v1.getExpectation(1), closeTo(0.5, 0.00001));
+
+    v1 = new EvidenceCountImpl(3, 7);
+    assertThat(v1.toTruthValue(1).getExpectation(), closeTo(v1.getExpectation(1), 0.000000001));
+    assertThat(v1.toFrequencyInterval(1).getExpectation(),
+        closeTo(v1.getExpectation(1), 0.000000001));
+  }
 }

@@ -16,11 +16,18 @@ public interface TruthValue
   double getFrequency();
 
   /**
-   * Returns the confidence of this truth value in the range ]0,1[.
+   * Returns the confidence of this truth value in the range (0,1).
    *
-   * @return the confidence of this truth value in the range ]0,1[
+   * @return the confidence of this truth value in the range (0,1)
    */
   double getConfidence();
+
+  /**
+   * Returns the the expectation value.
+   *
+   * @return the expectation value
+   */
+  double getExpectation();
 
   /**
    * Apply the revision function to this truth value and the one in argument.

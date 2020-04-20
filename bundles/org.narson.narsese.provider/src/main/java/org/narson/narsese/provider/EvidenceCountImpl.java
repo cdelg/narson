@@ -29,6 +29,14 @@ final class EvidenceCountImpl implements EvidenceCount
   }
 
   @Override
+  public double getExpectation(long evidentialHorizon) throws IllegalArgumentException
+  {
+    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
+
+    return (positiveEvidenceCount + evidentialHorizon / 2.0) / (evidenceCount + evidentialHorizon);
+  }
+
+  @Override
   public TruthValue toTruthValue(long evidentialHorizon) throws IllegalArgumentException
   {
     checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");

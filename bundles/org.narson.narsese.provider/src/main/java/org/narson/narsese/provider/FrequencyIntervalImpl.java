@@ -12,6 +12,7 @@ final class FrequencyIntervalImpl implements FrequencyInterval
   private final double upper;
   private final double ignorance;
   private final AtomicReference<TruthValue> cachedTruthValue = new AtomicReference<>();
+  private final AtomicReference<Double> cachedExpectation = new AtomicReference<>();
 
   public FrequencyIntervalImpl(double lower, double upper, TruthValue truthValue)
   {
@@ -44,6 +45,21 @@ final class FrequencyIntervalImpl implements FrequencyInterval
   public double getIgnorance()
   {
     return ignorance;
+  }
+
+  @Override
+  public double getExpectation()
+  {
+    Double result = cachedExpectation.get();
+    if (result == null)
+    {
+      result = (lower + upper) / 2.0;
+      if (!cachedExpectation.compareAndSet(null, result))
+      {
+        return cachedExpectation.get();
+      }
+    }
+    return result;
   }
 
   @Override

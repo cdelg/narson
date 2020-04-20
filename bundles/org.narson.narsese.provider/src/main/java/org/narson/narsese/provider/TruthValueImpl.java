@@ -13,6 +13,7 @@ final class TruthValueImpl implements TruthValue
   private final double confidence;
   private final AtomicReference<FrequencyInterval> cachedFrequencyInterval =
       new AtomicReference<>();
+  private final AtomicReference<Double> cachedExpectation = new AtomicReference<>();
 
   public TruthValueImpl(double frequency, double confidence)
   {
@@ -40,6 +41,21 @@ final class TruthValueImpl implements TruthValue
   }
 
   @Override
+  public double getExpectation()
+  {
+    Double result = cachedExpectation.get();
+    if (result == null)
+    {
+      result = confidence * (frequency - 0.5) + 0.5;
+      if (!cachedExpectation.compareAndSet(null, result))
+      {
+        return cachedExpectation.get();
+      }
+    }
+    return result;
+  }
+
+  @Override
   public TruthValue revise(TruthValue truthValue) throws NullPointerException
   {
     checkNotNull(truthValue, "truthValue");
@@ -62,8 +78,8 @@ final class TruthValueImpl implements TruthValue
     FrequencyInterval result = cachedFrequencyInterval.get();
     if (result == null)
     {
-      result = new FrequencyIntervalImpl(frequency * confidence, (1 - confidence) * (1 - frequency),
-          this);
+      result =
+          new FrequencyIntervalImpl(frequency * confidence, 1 - confidence * (1 - frequency), this);
       if (!cachedFrequencyInterval.compareAndSet(null, result))
       {
         return cachedFrequencyInterval.get();

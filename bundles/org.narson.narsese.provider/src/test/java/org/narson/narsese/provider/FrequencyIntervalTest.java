@@ -78,4 +78,18 @@ public class FrequencyIntervalTest
     assertThat(v1.toEvidenceCount(1).toFrequencyInterval(1).getLowerBound(), closeTo(0.3, 0.5));
     assertThat(v1.toEvidenceCount(1).toFrequencyInterval(1).getUpperBound(), closeTo(0.4, 0.5));
   }
+
+  @Test
+  public void testExpectation()
+  {
+    v1 = new FrequencyIntervalImpl(0.3, 0.7);
+    assertThat(v1.getExpectation(), equalTo(0.5));
+
+    v1 = new FrequencyIntervalImpl(0.1, 0.2);
+    assertThat(v1.getExpectation(), closeTo(0.15, 0.00001));
+
+    v1 = new FrequencyIntervalImpl(0.3, 0.7);
+    assertThat(v1.toTruthValue().getExpectation(), closeTo(v1.getExpectation(), 0.000000001));
+    assertThat(v1.toEvidenceCount(1).getExpectation(1), closeTo(v1.getExpectation(), 0.000000001));
+  }
 }

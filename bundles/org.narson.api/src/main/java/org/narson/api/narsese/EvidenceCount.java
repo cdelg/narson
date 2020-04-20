@@ -24,6 +24,14 @@ public interface EvidenceCount
   long getEvidenceCount();
 
   /**
+   * Returns the the expectation value using the specified evidential horizon.
+   *
+   * @return the expectation value
+   * @throws IllegalArgumentException if evidentialHorizon is less or equals to 0
+   */
+  double getExpectation(long evidentialHorizon) throws IllegalArgumentException;
+
+  /**
    * Convert this amount of evidences to a truth value using the specified evidential horizon.
    *
    * @param evidentialHorizon the evidential horizon to use for the conversion, must be greater than

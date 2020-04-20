@@ -43,7 +43,7 @@ public class TruthValueTest
   {
     v1 = new TruthValueImpl(0.5, 0.5);
     assertThat(v1.toFrequencyInterval().getLowerBound(), equalTo(0.25));
-    assertThat(v1.toFrequencyInterval().getUpperBound(), equalTo(0.25));
+    assertThat(v1.toFrequencyInterval().getUpperBound(), equalTo(0.75));
 
     v1 = new TruthValueImpl(1.0, 0.9);
     assertThat(v1.toFrequencyInterval().toTruthValue().getFrequency(), equalTo(1.0));
@@ -101,5 +101,19 @@ public class TruthValueTest
     v1 = new TruthValueImpl(1, 0.9);
     assertThat(v1.revise(new TruthValueImpl(0.2, 0.3)).getFrequency(), closeTo(0.96, 0.963));
     assertThat(v1.revise(new TruthValueImpl(0.2, 0.3)).getConfidence(), closeTo(0.9, 0.904));
+  }
+
+  @Test
+  public void testExpectation()
+  {
+    v1 = new TruthValueImpl(1, 0.9);
+    assertThat(v1.getExpectation(), equalTo(0.95));
+
+    v1 = new TruthValueImpl(0.5, 0.2);
+    assertThat(v1.getExpectation(), equalTo(0.5));
+
+    v1 = new TruthValueImpl(1, 0.9);
+    assertThat(v1.toFrequencyInterval().getExpectation(), equalTo(v1.getExpectation()));
+    assertThat(v1.toEvidenceCount(1).getExpectation(1), closeTo(v1.getExpectation(), 0.000000001));
   }
 }
