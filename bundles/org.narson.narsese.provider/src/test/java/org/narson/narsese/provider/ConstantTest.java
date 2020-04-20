@@ -35,4 +35,11 @@ public class ConstantTest
 
     assertThat(c1, is(not(equalTo(c2))));
   }
+
+  @Test
+  public void testComplexity()
+  {
+    c1 = nf.constant("a");
+    assertThat(c1.getSyntacticComplexity(), equalTo(1));
+  }
 }

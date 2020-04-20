@@ -79,4 +79,14 @@ public class CompoundTermTest
 
     assertThat(c1, equalTo(c2));
   }
+
+  @Test
+  public void testComplexity()
+  {
+    c1 = nf.compoundTerm(Connector.CONJUNCTION).of(nf.constant("b"), nf.constant("a")).build();
+    assertThat(c1.getSyntacticComplexity(), equalTo(3));
+
+    c1 = nf.compoundTerm(Connector.CONJUNCTION).of(nf.constant("b"), nf.constant("a"), c1).build();
+    assertThat(c1.getSyntacticComplexity(), equalTo(6));
+  }
 }

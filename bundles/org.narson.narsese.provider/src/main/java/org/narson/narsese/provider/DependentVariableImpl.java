@@ -47,6 +47,12 @@ final class DependentVariableImpl extends AbstractTerm implements DependentVaria
   }
 
   @Override
+  protected int computeSyntacticComplexity()
+  {
+    return 1;
+  }
+
+  @Override
   public int hashCode()
   {
     final int prime = 31;

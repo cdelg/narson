@@ -30,6 +30,12 @@ final class OperationImpl extends AbstractTerm implements Operation
   }
 
   @Override
+  protected int computeSyntacticComplexity()
+  {
+    return getTerms().stream().mapToInt(Term::getSyntacticComplexity).sum() + 1;
+  }
+
+  @Override
   public int hashCode()
   {
     final int prime = 31;

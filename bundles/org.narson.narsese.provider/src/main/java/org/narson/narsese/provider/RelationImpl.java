@@ -38,6 +38,12 @@ final class RelationImpl extends AbstractTerm implements Relation
   }
 
   @Override
+  protected int computeSyntacticComplexity()
+  {
+    return subject.getSyntacticComplexity() + predicate.getSyntacticComplexity() + 1;
+  }
+
+  @Override
   public int hashCode()
   {
     final int prime = 31;

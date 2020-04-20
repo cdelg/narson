@@ -51,4 +51,14 @@ public class RelationTest
     v2 = nf.relation(nf.constant("b"), Copula.INSTANCE, nf.constant("a"));
     assertThat(v1, is(not(equalTo(v2))));
   }
+
+  @Test
+  public void testComplexity()
+  {
+    v1 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("a"));
+    assertThat(v1.getSyntacticComplexity(), equalTo(3));
+
+    v1 = nf.relation(v1, Copula.INSTANCE, nf.constant("a"));
+    assertThat(v1.getSyntacticComplexity(), equalTo(5));
+  }
 }

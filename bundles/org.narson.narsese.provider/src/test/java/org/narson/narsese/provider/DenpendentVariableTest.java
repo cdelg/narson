@@ -61,4 +61,14 @@ public class DenpendentVariableTest
     v2 = nf.dependentVariable("a").dependsOn("x", "z").build();
     assertThat(v1, is(not(equalTo(v2))));
   }
+
+  @Test
+  public void testComplexity()
+  {
+    v1 = nf.dependentVariable("a").build();
+    assertThat(v1.getSyntacticComplexity(), equalTo(1));
+
+    v1 = nf.dependentVariable("a").dependsOn("x", "y").build();
+    assertThat(v1.getSyntacticComplexity(), equalTo(1));
+  }
 }

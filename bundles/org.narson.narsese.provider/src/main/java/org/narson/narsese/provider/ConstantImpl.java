@@ -19,6 +19,12 @@ final class ConstantImpl extends AbstractTerm implements Constant
   }
 
   @Override
+  protected int computeSyntacticComplexity()
+  {
+    return 1;
+  }
+
+  @Override
   public int hashCode()
   {
     final int prime = 31;

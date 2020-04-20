@@ -50,4 +50,11 @@ public class QueryVariableTest
     v2 = nf.queryVariable("b");
     assertThat(v1, is(not(equalTo(v2))));
   }
+
+  @Test
+  public void testComplexity()
+  {
+    v1 = nf.queryVariable("a");
+    assertThat(v1.getSyntacticComplexity(), equalTo(1));
+  }
 }

@@ -46,6 +46,11 @@ final class CompoundTermImpl extends AbstractTerm implements CompoundTerm
     return placeHolderPosition;
   }
 
+  @Override
+  protected int computeSyntacticComplexity()
+  {
+    return getTerms().stream().mapToInt(Term::getSyntacticComplexity).sum() + 1;
+  }
 
   private boolean orderMatters()
   {

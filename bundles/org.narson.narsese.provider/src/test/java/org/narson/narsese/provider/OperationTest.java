@@ -53,4 +53,17 @@ public class OperationTest
 
     assertThat(c1, is(not(equalTo(c2))));
   }
+
+  @Test
+  public void testComplexity()
+  {
+    c1 = nf.operation("a").build();
+    assertThat(c1.getSyntacticComplexity(), equalTo(1));
+
+    c1 = nf.operation("a").on(nf.constant("b"), nf.constant("a")).build();
+    assertThat(c1.getSyntacticComplexity(), equalTo(3));
+
+    c1 = nf.operation("a").on(c1, nf.constant("a")).build();
+    assertThat(c1.getSyntacticComplexity(), equalTo(5));
+  }
 }

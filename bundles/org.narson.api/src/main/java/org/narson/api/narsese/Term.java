@@ -14,6 +14,21 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface Term extends NarseseValue
 {
   /**
+   * Returns the syntactic complexity of this term.
+   *
+   * @return the syntactic complexity of this term
+   */
+  int getSyntacticComplexity();
+
+  /**
+   * Returns the syntactic simplicity of this term given the razor parameter.
+   *
+   * @return the syntactic complexity of this term
+   * @throws IllegalArgumentException if razorParameter if less or equals to 0
+   */
+  double getSyntacticSimplicity(double razorParameter) throws IllegalArgumentException;
+
+  /**
    * Returns the Narsese text for this term.
    *
    * @return the Narsese text for this term

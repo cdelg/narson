@@ -33,4 +33,11 @@ public class IndenpendentVariableTest
     v2 = nf.independantVariable("b");
     assertThat(v1, is(not(equalTo(v2))));
   }
+
+  @Test
+  public void testComplexity()
+  {
+    v1 = nf.independantVariable("a");
+    assertThat(v1.getSyntacticComplexity(), equalTo(1));
+  }
 }
