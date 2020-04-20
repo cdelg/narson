@@ -37,7 +37,6 @@ public class NarseseParsingGeneratorTest implements NarseseChars
     {
       writer.write(firstRound);
     }
-    System.out.println(out.getBuffer().toString());
     try (NarseseReader reader = n.createReader(new StringReader(out.getBuffer().toString())))
     {
       secondRound = reader.read().collect(Collectors.toList());

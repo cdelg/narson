@@ -38,6 +38,12 @@ interface NarseseChars
   char CHAR_UNDERSCORE = '_';
   char CHAR_DOT = '.';
 
+  char CHAR_START_EVIDENCE_COUNT = '{';
+  char CHAR_END_EVIDENCE_COUNT = '}';
+  char CHAR_EVIDENCE_COUNT_SEPARATOR = ';';
+  char CHAR_START_INTERVAL = '[';
+  char CHAR_END_INTERVAL = ']';
+  char CHAR_INTERVAL_SEPARATOR = ';';
   char CHAR_START_BLOCK = '(';
   char CHAR_END_BLOCK = ')';
   char CHAR_START_EXTENSIONAL_SET = '{';

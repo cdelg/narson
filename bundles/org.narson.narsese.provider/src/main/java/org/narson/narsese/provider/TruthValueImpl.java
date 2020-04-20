@@ -1,16 +1,30 @@
 package org.narson.narsese.provider;
 
+import static org.narson.tools.PredChecker.checkArgument;
+import static org.narson.tools.PredChecker.checkNotNull;
+import java.util.concurrent.atomic.AtomicReference;
+import org.narson.api.narsese.EvidenceCount;
+import org.narson.api.narsese.FrequencyInterval;
 import org.narson.api.narsese.TruthValue;
 
 final class TruthValueImpl implements TruthValue
 {
   private final double frequency;
   private final double confidence;
+  private final AtomicReference<FrequencyInterval> cachedFrequencyInterval =
+      new AtomicReference<>();
 
   public TruthValueImpl(double frequency, double confidence)
   {
     this.frequency = frequency;
     this.confidence = confidence;
+  }
+
+  public TruthValueImpl(double frequency, double confidence, FrequencyInterval frequencyInterval)
+  {
+    this.frequency = frequency;
+    this.confidence = confidence;
+    cachedFrequencyInterval.set(frequencyInterval);
   }
 
   @Override
@@ -24,6 +38,49 @@ final class TruthValueImpl implements TruthValue
   {
     return confidence;
   }
+
+  @Override
+  public TruthValue revise(TruthValue truthValue) throws NullPointerException
+  {
+    checkNotNull(truthValue, "truthValue");
+
+    return new TruthValueImpl(
+        (frequency * confidence * (1 - truthValue.getConfidence())
+            + truthValue.getFrequency() * truthValue.getConfidence() * (1 - confidence))
+            / (confidence * (1 - truthValue.getConfidence())
+                + truthValue.getConfidence() * (1 - confidence)),
+        (confidence * (1 - truthValue.getConfidence())
+            + truthValue.getConfidence() * (1 - confidence))
+            / (confidence * (1 - truthValue.getConfidence())
+                + truthValue.getConfidence() * (1 - confidence)
+                + (1 - confidence) * (1 - truthValue.getConfidence())));
+  }
+
+  @Override
+  public FrequencyInterval toFrequencyInterval()
+  {
+    FrequencyInterval result = cachedFrequencyInterval.get();
+    if (result == null)
+    {
+      result = new FrequencyIntervalImpl(frequency * confidence, (1 - confidence) * (1 - frequency),
+          this);
+      if (!cachedFrequencyInterval.compareAndSet(null, result))
+      {
+        return cachedFrequencyInterval.get();
+      }
+    }
+    return result;
+  }
+
+  @Override
+  public EvidenceCount toEvidenceCount(long evidentialHorizon) throws IllegalArgumentException
+  {
+    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
+    return new EvidenceCountImpl(
+        Math.round(evidentialHorizon * frequency * confidence / (1 - confidence)),
+        Math.max(Math.round(evidentialHorizon * confidence / (1 - confidence)), 1L));
+  }
+
 
   @Override
   public int hashCode()
