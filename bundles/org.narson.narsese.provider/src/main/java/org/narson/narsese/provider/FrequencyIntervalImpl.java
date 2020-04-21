@@ -2,7 +2,7 @@ package org.narson.narsese.provider;
 
 import static org.narson.tools.PredChecker.checkArgument;
 import java.util.concurrent.atomic.AtomicReference;
-import org.narson.api.narsese.EvidenceCount;
+import org.narson.api.narsese.EvidenceAmount;
 import org.narson.api.narsese.FrequencyInterval;
 import org.narson.api.narsese.TruthValue;
 
@@ -78,11 +78,11 @@ final class FrequencyIntervalImpl implements FrequencyInterval
   }
 
   @Override
-  public EvidenceCount toEvidenceCount(long evidentialHorizon) throws IllegalArgumentException
+  public EvidenceAmount toEvidenceAmount(double evidentialHorizon) throws IllegalArgumentException
   {
     checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
-    return new EvidenceCountImpl(Math.round(evidentialHorizon * lower / ignorance),
-        Math.max(Math.round(evidentialHorizon * (1 - ignorance) / ignorance), 1L));
+    return new EvidenceAmountImpl(evidentialHorizon * lower / ignorance,
+        evidentialHorizon * (1 - ignorance) / ignorance);
   }
 
   @Override

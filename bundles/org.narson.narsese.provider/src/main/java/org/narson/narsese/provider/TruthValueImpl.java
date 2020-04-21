@@ -3,7 +3,7 @@ package org.narson.narsese.provider;
 import static org.narson.tools.PredChecker.checkArgument;
 import static org.narson.tools.PredChecker.checkNotNull;
 import java.util.concurrent.atomic.AtomicReference;
-import org.narson.api.narsese.EvidenceCount;
+import org.narson.api.narsese.EvidenceAmount;
 import org.narson.api.narsese.FrequencyInterval;
 import org.narson.api.narsese.TruthValue;
 
@@ -56,7 +56,7 @@ final class TruthValueImpl implements TruthValue
   }
 
   @Override
-  public TruthValue revise(TruthValue truthValue) throws NullPointerException
+  public TruthValue applyRevision(TruthValue truthValue) throws NullPointerException
   {
     checkNotNull(truthValue, "truthValue");
 
@@ -70,6 +70,133 @@ final class TruthValueImpl implements TruthValue
             / (confidence * (1 - truthValue.getConfidence())
                 + truthValue.getConfidence() * (1 - confidence)
                 + (1 - confidence) * (1 - truthValue.getConfidence())));
+  }
+
+  @Override
+  public TruthValue applyNegation()
+  {
+    return new TruthValueImpl(1 - frequency, confidence);
+  }
+
+  @Override
+  public TruthValue applyConversion(double evidentialHorizon)
+  {
+    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
+
+    return new EvidenceAmountImpl(frequency * confidence, frequency * confidence)
+        .toTruthValue(evidentialHorizon);
+  }
+
+  @Override
+  public TruthValue applyContraposition(double evidentialHorizon)
+  {
+    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
+
+    return new EvidenceAmountImpl(0,
+        (1 - frequency) * confidence / ((1 - frequency) * confidence + evidentialHorizon))
+            .toTruthValue(evidentialHorizon);
+  }
+
+  @Override
+  public TruthValue applyDeduction(TruthValue truthValue)
+  {
+    checkNotNull(truthValue, "truthValue");
+
+    return new TruthValueImpl(frequency * truthValue.getFrequency(),
+        frequency * truthValue.getFrequency() * confidence * truthValue.getConfidence());
+  }
+
+  @Override
+  public TruthValue applyAnalogy(TruthValue truthValue)
+  {
+    checkNotNull(truthValue, "truthValue");
+
+    return new TruthValueImpl(frequency * truthValue.getFrequency(),
+        truthValue.getFrequency() * confidence * truthValue.getConfidence());
+  }
+
+  @Override
+  public TruthValue applyResemblance(TruthValue truthValue)
+  {
+    checkNotNull(truthValue, "truthValue");
+
+    return new TruthValueImpl(frequency * truthValue.getFrequency(),
+        (frequency + truthValue.getFrequency() - frequency * truthValue.getFrequency()) * confidence
+            * truthValue.getConfidence());
+  }
+
+  @Override
+  public TruthValue applyAbduction(TruthValue truthValue, double evidentialHorizon)
+  {
+    checkNotNull(truthValue, "truthValue");
+    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
+
+    return new EvidenceAmountImpl(
+        frequency * truthValue.getFrequency() * confidence * truthValue.getConfidence(),
+        frequency * confidence * truthValue.getConfidence()).toTruthValue(evidentialHorizon);
+  }
+
+  @Override
+  public TruthValue applyInduction(TruthValue truthValue, double evidentialHorizon)
+  {
+    checkNotNull(truthValue, "truthValue");
+    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
+
+    return new EvidenceAmountImpl(
+        frequency * truthValue.getFrequency() * confidence * truthValue.getConfidence(),
+        truthValue.getFrequency() * confidence * truthValue.getConfidence())
+            .toTruthValue(evidentialHorizon);
+  }
+
+  @Override
+  public TruthValue applyExemplification(TruthValue truthValue, double evidentialHorizon)
+  {
+    checkNotNull(truthValue, "truthValue");
+    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
+
+    return new EvidenceAmountImpl(
+        frequency * truthValue.getFrequency() * confidence * truthValue.getConfidence(),
+        frequency * truthValue.getFrequency() * confidence * truthValue.getConfidence())
+            .toTruthValue(evidentialHorizon);
+  }
+
+  @Override
+  public TruthValue applyComparison(TruthValue truthValue, double evidentialHorizon)
+  {
+    checkNotNull(truthValue, "truthValue");
+    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
+
+    return new EvidenceAmountImpl(
+        frequency * truthValue.getFrequency() * confidence * truthValue.getConfidence(),
+        (frequency + truthValue.getFrequency() - frequency * truthValue.getFrequency()) * confidence
+            * truthValue.getConfidence()).toTruthValue(evidentialHorizon);
+  }
+
+  @Override
+  public TruthValue applyIntersection(TruthValue truthValue)
+  {
+    checkNotNull(truthValue, "truthValue");
+
+    return new TruthValueImpl(frequency * truthValue.getFrequency(),
+        confidence * truthValue.getConfidence());
+  }
+
+  @Override
+  public TruthValue applyUnion(TruthValue truthValue)
+  {
+    checkNotNull(truthValue, "truthValue");
+
+    return new TruthValueImpl(1 - (1 - frequency) * (1 - truthValue.getFrequency()),
+        confidence * truthValue.getConfidence());
+  }
+
+  @Override
+  public TruthValue applyDifference(TruthValue truthValue)
+  {
+    checkNotNull(truthValue, "truthValue");
+
+    return new TruthValueImpl(frequency * (1 - truthValue.getFrequency()),
+        confidence * truthValue.getConfidence());
   }
 
   @Override
@@ -89,12 +216,11 @@ final class TruthValueImpl implements TruthValue
   }
 
   @Override
-  public EvidenceCount toEvidenceCount(long evidentialHorizon) throws IllegalArgumentException
+  public EvidenceAmount toEvidenceAmount(double evidentialHorizon) throws IllegalArgumentException
   {
     checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
-    return new EvidenceCountImpl(
-        Math.round(evidentialHorizon * frequency * confidence / (1 - confidence)),
-        Math.max(Math.round(evidentialHorizon * confidence / (1 - confidence)), 1L));
+    return new EvidenceAmountImpl(evidentialHorizon * frequency * confidence / (1 - confidence),
+        evidentialHorizon * confidence / (1 - confidence));
   }
 
 

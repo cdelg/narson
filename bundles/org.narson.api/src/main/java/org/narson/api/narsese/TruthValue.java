@@ -30,11 +30,121 @@ public interface TruthValue
   double getExpectation();
 
   /**
-   * Apply the revision function to this truth value and the one in argument.
+   * Apply the revision function using this truth value and the one in argument.
    *
-   * @return a revised truth value
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
    */
-  TruthValue revise(TruthValue truthValue) throws NullPointerException;
+  TruthValue applyRevision(TruthValue truthValue) throws NullPointerException;
+
+  /**
+   * Apply the negation function to this truth value.
+   *
+   * @return the resulting truth value
+   */
+  TruthValue applyNegation();
+
+  /**
+   * Apply the conversion function to this truth value.
+   *
+   * @return the resulting truth value
+   */
+  TruthValue applyConversion(double evidentialHorizon) throws IllegalArgumentException;
+
+  /**
+   * Apply the contraposition function to this truth value.
+   *
+   * @return the resulting truth value
+   */
+  TruthValue applyContraposition(double evidentialHorizon) throws IllegalArgumentException;
+
+  /**
+   * Apply the deduction function using this truth value and the one in argument.
+   *
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
+   */
+  TruthValue applyDeduction(TruthValue truthValue) throws NullPointerException;
+
+  /**
+   * Apply the analogy function using this truth value and the one in argument.
+   *
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
+   */
+  TruthValue applyAnalogy(TruthValue truthValue) throws NullPointerException;
+
+  /**
+   * Apply the resemblance function using this truth value and the one in argument.
+   *
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
+   */
+  TruthValue applyResemblance(TruthValue truthValue) throws NullPointerException;
+
+  /**
+   * Apply the abduction function using this truth value and the one in argument.
+   *
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
+   * @throws IllegalArgumentException if evidentialHorizon is less or equals to 0
+   */
+  TruthValue applyAbduction(TruthValue truthValue, double evidentialHorizon)
+      throws IllegalArgumentException, NullPointerException;
+
+  /**
+   * Apply the induction function using this truth value and the one in argument.
+   *
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
+   * @throws IllegalArgumentException if evidentialHorizon is less or equals to 0
+   */
+  TruthValue applyInduction(TruthValue truthValue, double evidentialHorizon)
+      throws IllegalArgumentException, NullPointerException;
+
+  /**
+   * Apply the exemplification function using this truth value and the one in argument.
+   *
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
+   * @throws IllegalArgumentException if evidentialHorizon is less or equals to 0
+   */
+  TruthValue applyExemplification(TruthValue truthValue, double evidentialHorizon)
+      throws IllegalArgumentException, NullPointerException;
+
+  /**
+   * Apply the comparison function using this truth value and the one in argument.
+   *
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
+   * @throws IllegalArgumentException if evidentialHorizon is less or equals to 0
+   */
+  TruthValue applyComparison(TruthValue truthValue, double evidentialHorizon)
+      throws IllegalArgumentException, NullPointerException;
+
+  /**
+   * Apply the intersection function using this truth value and the one in argument.
+   *
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
+   */
+  TruthValue applyIntersection(TruthValue truthValue) throws NullPointerException;
+
+  /**
+   * Apply the union function using this truth value and the one in argument.
+   *
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
+   */
+  TruthValue applyUnion(TruthValue truthValue) throws NullPointerException;
+
+  /**
+   * Apply the difference function using this truth value and the one in argument.
+   *
+   * @return the resulting truth value
+   * @throws NullPointerException if truthValue is null
+   */
+  TruthValue applyDifference(TruthValue truthValue) throws NullPointerException;
 
   /**
    * Convert this truth value to a frequency interval.
@@ -51,5 +161,5 @@ public interface TruthValue
    * @return the amount of evidences of this truth value
    * @throws IllegalArgumentException if evidentialHorizon is less or equals to 0
    */
-  EvidenceCount toEvidenceCount(long evidentialHorizon) throws IllegalArgumentException;
+  EvidenceAmount toEvidenceAmount(double evidentialHorizon) throws IllegalArgumentException;
 }

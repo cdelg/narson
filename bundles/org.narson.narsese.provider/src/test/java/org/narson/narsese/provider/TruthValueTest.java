@@ -55,52 +55,52 @@ public class TruthValueTest
   }
 
   @Test
-  public void testConvertionToEvidenCount()
+  public void testConvertionToAmountOfEvidence()
   {
     assertThrows(IllegalArgumentException.class,
-        () -> new TruthValueImpl(0.5, 0.5).toEvidenceCount(0));
+        () -> new TruthValueImpl(0.5, 0.5).toEvidenceAmount(0));
     assertThrows(IllegalArgumentException.class,
-        () -> new TruthValueImpl(0.5, 0.5).toEvidenceCount(-1));
+        () -> new TruthValueImpl(0.5, 0.5).toEvidenceAmount(-1));
 
     v1 = new TruthValueImpl(1, 0.9);
-    assertThat(v1.toEvidenceCount(1).getEvidenceCount(), equalTo(9L));
-    assertThat(v1.toEvidenceCount(1).getPositiveEvidenceCount(), equalTo(9L));
-    assertThat(v1.toEvidenceCount(2).getEvidenceCount(), equalTo(18L));
-    assertThat(v1.toEvidenceCount(2).getPositiveEvidenceCount(), equalTo(18L));
+    assertThat(v1.toEvidenceAmount(1).getAmountOfEvidence(), closeTo(9, 0.00001));
+    assertThat(v1.toEvidenceAmount(1).getPositiveAmountOfEvidence(), closeTo(9, 0.00001));
+    assertThat(v1.toEvidenceAmount(2).getAmountOfEvidence(), closeTo(18, 0.00001));
+    assertThat(v1.toEvidenceAmount(2).getPositiveAmountOfEvidence(), closeTo(18, 0.00001));
 
     v1 = new TruthValueImpl(0.02, 0.99);
-    assertThat(v1.toEvidenceCount(1).toTruthValue(1).getFrequency(), closeTo(0.02, 0.002));
-    assertThat(v1.toEvidenceCount(1).toTruthValue(1).getConfidence(), equalTo(0.99));
+    assertThat(v1.toEvidenceAmount(1).toTruthValue(1).getFrequency(), closeTo(0.02, 0.00001));
+    assertThat(v1.toEvidenceAmount(1).toTruthValue(1).getConfidence(), equalTo(0.99));
 
     v1 = new TruthValueImpl(0.5, 0.5);
-    assertThat(v1.toEvidenceCount(1).toTruthValue(1).getFrequency(), closeTo(0.5, 0.5));
-    assertThat(v1.toEvidenceCount(1).toTruthValue(1).getConfidence(), equalTo(0.5));
+    assertThat(v1.toEvidenceAmount(1).toTruthValue(1).getFrequency(), closeTo(0.5, 0.00001));
+    assertThat(v1.toEvidenceAmount(1).toTruthValue(1).getConfidence(), equalTo(0.5));
 
     v1 = new TruthValueImpl(0.4, 0.3);
-    assertThat(v1.toEvidenceCount(1).toTruthValue(1).getFrequency(), closeTo(0.4, 0.5));
-    assertThat(v1.toEvidenceCount(1).toTruthValue(1).getConfidence(), closeTo(0.3, 0.5));
+    assertThat(v1.toEvidenceAmount(1).toTruthValue(1).getFrequency(), closeTo(0.4, 0.00001));
+    assertThat(v1.toEvidenceAmount(1).toTruthValue(1).getConfidence(), closeTo(0.3, 0.00001));
   }
 
   @Test
   public void testRevision()
   {
-    assertThrows(NullPointerException.class, () -> new TruthValueImpl(1, 0.9).revise(null));
+    assertThrows(NullPointerException.class, () -> new TruthValueImpl(1, 0.9).applyRevision(null));
 
     v1 = new TruthValueImpl(1, 0.9);
-    assertThat(v1.revise(v1).getFrequency(), equalTo(1.0));
-    assertThat(v1.revise(v1).getConfidence(), closeTo(0.9, 0.94));
+    assertThat(v1.applyRevision(v1).getFrequency(), equalTo(1.0));
+    assertThat(v1.applyRevision(v1).getConfidence(), closeTo(0.9, 0.94));
 
     v1 = new TruthValueImpl(1, 0.9);
-    assertThat(v1.revise(new TruthValueImpl(1, 0.5)).getFrequency(), equalTo(1.0));
-    assertThat(v1.revise(new TruthValueImpl(1, 0.5)).getConfidence(), closeTo(0.9, 0.909));
+    assertThat(v1.applyRevision(new TruthValueImpl(1, 0.5)).getFrequency(), equalTo(1.0));
+    assertThat(v1.applyRevision(new TruthValueImpl(1, 0.5)).getConfidence(), closeTo(0.9, 0.909));
 
     v1 = new TruthValueImpl(1, 0.9);
-    assertThat(v1.revise(new TruthValueImpl(0.2, 0.9)).getFrequency(), equalTo(0.6));
-    assertThat(v1.revise(new TruthValueImpl(0.2, 0.9)).getConfidence(), closeTo(0.9, 0.94));
+    assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.9)).getFrequency(), equalTo(0.6));
+    assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.9)).getConfidence(), closeTo(0.9, 0.94));
 
     v1 = new TruthValueImpl(1, 0.9);
-    assertThat(v1.revise(new TruthValueImpl(0.2, 0.3)).getFrequency(), closeTo(0.96, 0.963));
-    assertThat(v1.revise(new TruthValueImpl(0.2, 0.3)).getConfidence(), closeTo(0.9, 0.904));
+    assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.3)).getFrequency(), closeTo(0.96, 0.963));
+    assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.3)).getConfidence(), closeTo(0.9, 0.904));
   }
 
   @Test
@@ -114,6 +114,6 @@ public class TruthValueTest
 
     v1 = new TruthValueImpl(1, 0.9);
     assertThat(v1.toFrequencyInterval().getExpectation(), equalTo(v1.getExpectation()));
-    assertThat(v1.toEvidenceCount(1).getExpectation(1), closeTo(v1.getExpectation(), 0.000000001));
+    assertThat(v1.toEvidenceAmount(1).getExpectation(1), closeTo(v1.getExpectation(), 0.000000001));
   }
 }

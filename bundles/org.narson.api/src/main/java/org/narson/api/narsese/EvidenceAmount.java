@@ -3,25 +3,25 @@ package org.narson.api.narsese;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * EvidenceCount class represent the amount of evidences which can be used to compute a Narsese
+ * EvidenceAmount class represent the amount of evidence which can be used to compute a Narsese
  * truth value or frequency interval.
  */
 @ProviderType
-public interface EvidenceCount
+public interface EvidenceAmount
 {
   /**
-   * Returns the total amount of positive evidences.
+   * Returns the amount of positive evidence.
    *
-   * @return the total amount of positive evidences
+   * @return the amount of positive evidence
    */
-  long getPositiveEvidenceCount();
+  double getPositiveAmountOfEvidence();
 
   /**
-   * Returns the total amount of evidences.
+   * Returns the amount of evidence.
    *
-   * @return the total amount of evidences
+   * @return the amount of evidence
    */
-  long getEvidenceCount();
+  double getAmountOfEvidence();
 
   /**
    * Returns the the expectation value using the specified evidential horizon.
@@ -29,7 +29,7 @@ public interface EvidenceCount
    * @return the expectation value
    * @throws IllegalArgumentException if evidentialHorizon is less or equals to 0
    */
-  double getExpectation(long evidentialHorizon) throws IllegalArgumentException;
+  double getExpectation(double evidentialHorizon) throws IllegalArgumentException;
 
   /**
    * Convert this amount of evidences to a truth value using the specified evidential horizon.
@@ -39,7 +39,7 @@ public interface EvidenceCount
    * @return a truth value
    * @throws IllegalArgumentException if evidentialHorizon is less or equals to 0
    */
-  TruthValue toTruthValue(long evidentialHorizon) throws IllegalArgumentException;
+  TruthValue toTruthValue(double evidentialHorizon) throws IllegalArgumentException;
 
   /**
    *
@@ -51,5 +51,5 @@ public interface EvidenceCount
    * @return a frequency interval
    * @throws IllegalArgumentException if evidentialHorizon is less or equals to 0
    */
-  FrequencyInterval toFrequencyInterval(long evidentialHorizon) throws IllegalArgumentException;
+  FrequencyInterval toFrequencyInterval(double evidentialHorizon) throws IllegalArgumentException;
 }

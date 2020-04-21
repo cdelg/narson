@@ -60,23 +60,23 @@ public class FrequencyIntervalTest
   public void testConvertionToEvidenCount()
   {
     assertThrows(IllegalArgumentException.class,
-        () -> new FrequencyIntervalImpl(0.5, 0.5).toEvidenceCount(0));
+        () -> new FrequencyIntervalImpl(0.5, 0.5).toEvidenceAmount(0));
     assertThrows(IllegalArgumentException.class,
-        () -> new FrequencyIntervalImpl(0.5, 0.5).toEvidenceCount(-1));
+        () -> new FrequencyIntervalImpl(0.5, 0.5).toEvidenceAmount(-1));
 
     v1 = new FrequencyIntervalImpl(0.5, 0.9);
-    assertThat(v1.toEvidenceCount(1).getEvidenceCount(), equalTo(1L));
-    assertThat(v1.toEvidenceCount(1).getPositiveEvidenceCount(), equalTo(1L));
-    assertThat(v1.toEvidenceCount(2).getEvidenceCount(), equalTo(3L));
-    assertThat(v1.toEvidenceCount(2).getPositiveEvidenceCount(), equalTo(3L));
+    assertThat(v1.toEvidenceAmount(1).getAmountOfEvidence(), closeTo(1.49999, 0.00001));
+    assertThat(v1.toEvidenceAmount(1).getPositiveAmountOfEvidence(), closeTo(1.25, 0.00001));
+    assertThat(v1.toEvidenceAmount(2).getAmountOfEvidence(), closeTo(3, 0.00001));
+    assertThat(v1.toEvidenceAmount(2).getPositiveAmountOfEvidence(), closeTo(2.5, 0.00001));
 
     v1 = new FrequencyIntervalImpl(0.02, 0.99);
-    assertThat(v1.toEvidenceCount(1).toFrequencyInterval(1).getLowerBound(), closeTo(0.02, 0.02));
-    assertThat(v1.toEvidenceCount(1).toFrequencyInterval(1).getUpperBound(), closeTo(0.99, 0.5));
+    assertThat(v1.toEvidenceAmount(1).toFrequencyInterval(1).getLowerBound(), closeTo(0.02, 0.02));
+    assertThat(v1.toEvidenceAmount(1).toFrequencyInterval(1).getUpperBound(), closeTo(0.99, 0.5));
 
     v1 = new FrequencyIntervalImpl(0.3, 0.4);
-    assertThat(v1.toEvidenceCount(1).toFrequencyInterval(1).getLowerBound(), closeTo(0.3, 0.5));
-    assertThat(v1.toEvidenceCount(1).toFrequencyInterval(1).getUpperBound(), closeTo(0.4, 0.5));
+    assertThat(v1.toEvidenceAmount(1).toFrequencyInterval(1).getLowerBound(), closeTo(0.3, 0.5));
+    assertThat(v1.toEvidenceAmount(1).toFrequencyInterval(1).getUpperBound(), closeTo(0.4, 0.5));
   }
 
   @Test
@@ -90,6 +90,6 @@ public class FrequencyIntervalTest
 
     v1 = new FrequencyIntervalImpl(0.3, 0.7);
     assertThat(v1.toTruthValue().getExpectation(), closeTo(v1.getExpectation(), 0.000000001));
-    assertThat(v1.toEvidenceCount(1).getExpectation(1), closeTo(v1.getExpectation(), 0.000000001));
+    assertThat(v1.toEvidenceAmount(1).getExpectation(1), closeTo(v1.getExpectation(), 0.000000001));
   }
 }

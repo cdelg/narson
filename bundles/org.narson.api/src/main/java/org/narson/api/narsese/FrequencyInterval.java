@@ -54,5 +54,5 @@ public interface FrequencyInterval
    * @return the amount of evidences of this frequency interval
    * @throws IllegalArgumentException if evidentialHorizon is less or equals to 0
    */
-  EvidenceCount toEvidenceCount(long evidentialHorizon) throws IllegalArgumentException;
+  EvidenceAmount toEvidenceAmount(double evidentialHorizon) throws IllegalArgumentException;
 }
