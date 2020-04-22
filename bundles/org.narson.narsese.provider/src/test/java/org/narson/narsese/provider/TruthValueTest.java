@@ -92,11 +92,11 @@ public class TruthValueTest
 
     v1 = new TruthValueImpl(1, 0.9);
     assertThat(v1.applyRevision(new TruthValueImpl(1, 0.5)).getFrequency(), equalTo(1.0));
-    assertThat(v1.applyRevision(new TruthValueImpl(1, 0.5)).getConfidence(), closeTo(0.9, 0.909));
+    assertThat(v1.applyRevision(new TruthValueImpl(1, 0.5)).getConfidence(), closeTo(0.9, 0.01));
 
     v1 = new TruthValueImpl(1, 0.9);
     assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.9)).getFrequency(), equalTo(0.6));
-    assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.9)).getConfidence(), closeTo(0.9, 0.94));
+    assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.9)).getConfidence(), closeTo(0.94, 0.01));
 
     v1 = new TruthValueImpl(1, 0.9);
     assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.3)).getFrequency(), closeTo(0.96, 0.963));

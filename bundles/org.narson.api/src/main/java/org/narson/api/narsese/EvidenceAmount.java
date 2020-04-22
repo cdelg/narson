@@ -3,8 +3,8 @@ package org.narson.api.narsese;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * EvidenceAmount class represent the amount of evidence which can be used to compute a Narsese
- * truth value or frequency interval.
+ * EvidenceAmount class represent an immutable amount of evidence which can be used to compute a
+ * Narsese truth value or frequency interval.
  */
 @ProviderType
 public interface EvidenceAmount

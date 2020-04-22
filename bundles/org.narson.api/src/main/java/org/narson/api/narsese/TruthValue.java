@@ -3,7 +3,8 @@ package org.narson.api.narsese;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * TruthValue class represent a Narsese truth value composed of a frequency and a confidence value.
+ * TruthValue class represent an immutable Narsese truth value composed of a frequency and a
+ * confidence value.
  */
 @ProviderType
 public interface TruthValue

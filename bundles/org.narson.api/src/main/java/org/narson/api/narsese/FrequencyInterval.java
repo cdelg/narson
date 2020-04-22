@@ -3,8 +3,8 @@ package org.narson.api.narsese;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * FrequencyInterval class represent a Narsese frequency interval composed of a lower bound and an
- * upper bound.
+ * FrequencyInterval class represent an immutable Narsese frequency interval composed of a lower
+ * bound and an upper bound.
  *
  */
 @ProviderType
