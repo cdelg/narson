@@ -20,45 +20,45 @@ public class RelationTest
   @Test
   public void testRightValueType()
   {
-    assertThat(nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("a")).getValueType(),
+    assertThat(nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("a")).getValueType(),
         equalTo(ValueType.RELATION));
   }
 
   @Test
   public void testEqual()
   {
-    v1 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("a"));
-    v2 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("a"));
+    v1 = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("a"));
+    v2 = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("a"));
     assertThat(v1, equalTo(v2));
 
-    v1 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("a"));
-    v2 = nf.relation(nf.constant("a"), Copula.INSTANCE_PROPERTY, nf.constant("a"));
+    v1 = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("a"));
+    v2 = nf.relation(nf.constant("a"), Copula.SIMILARITY, nf.constant("a"));
     assertThat(v1, is(not(equalTo(v2))));
 
-    v1 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("b"));
-    v2 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("a"));
+    v1 = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("b"));
+    v2 = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("a"));
     assertThat(v1, is(not(equalTo(v2))));
 
-    v1 = nf.relation(nf.constant("b"), Copula.INSTANCE, nf.constant("a"));
-    v2 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("a"));
+    v1 = nf.relation(nf.constant("b"), Copula.INHERITANCE, nf.constant("a"));
+    v2 = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("a"));
     assertThat(v1, is(not(equalTo(v2))));
 
-    v1 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("a"));
-    v2 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("b"));
+    v1 = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("a"));
+    v2 = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("b"));
     assertThat(v1, is(not(equalTo(v2))));
 
-    v1 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("a"));
-    v2 = nf.relation(nf.constant("b"), Copula.INSTANCE, nf.constant("a"));
+    v1 = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("a"));
+    v2 = nf.relation(nf.constant("b"), Copula.INHERITANCE, nf.constant("a"));
     assertThat(v1, is(not(equalTo(v2))));
   }
 
   @Test
   public void testComplexity()
   {
-    v1 = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("a"));
+    v1 = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("a"));
     assertThat(v1.getSyntacticComplexity(), equalTo(3));
 
-    v1 = nf.relation(v1, Copula.INSTANCE, nf.constant("a"));
+    v1 = nf.relation(v1, Copula.INHERITANCE, nf.constant("a"));
     assertThat(v1.getSyntacticComplexity(), equalTo(5));
   }
 }

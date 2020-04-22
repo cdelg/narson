@@ -18,6 +18,7 @@ import org.narson.api.narsese.Query;
 import org.narson.api.narsese.QueryVariable;
 import org.narson.api.narsese.QuestionBuilder;
 import org.narson.api.narsese.Relation;
+import org.narson.api.narsese.SecondaryCopula;
 import org.narson.api.narsese.Term;
 import org.narson.api.narsese.TruthValue;
 
@@ -83,6 +84,33 @@ final class NarseseFactoryImpl implements NarseseFactory
     checkNotNull(predicate, "predicate");
 
     return new RelationImpl(bufferSize, prefixThreshold, subject, copula, predicate);
+  }
+
+  @Override
+  public Relation relation(Term subject, SecondaryCopula copula, Term predicate)
+  {
+    checkNotNull(subject, "subject");
+    checkNotNull(copula, "copula");
+    checkNotNull(predicate, "predicate");
+
+    switch (copula)
+    {
+      case INSTANCE:
+        return new RelationImpl(bufferSize, prefixThreshold,
+            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), Copula.INHERITANCE,
+            predicate);
+      case INSTANCE_PROPERTY:
+        return new RelationImpl(bufferSize, prefixThreshold,
+            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), Copula.INHERITANCE,
+            compoundTerm(Connector.INTENSIONAL_SET).of(predicate).build());
+      case PROPERTY:
+        return new RelationImpl(bufferSize, prefixThreshold, subject, Copula.INHERITANCE,
+            compoundTerm(Connector.INTENSIONAL_SET).of(predicate).build());
+      default:
+        return new RelationImpl(bufferSize, prefixThreshold,
+            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), Copula.INHERITANCE,
+            predicate);
+    }
   }
 
   @Override

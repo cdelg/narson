@@ -367,20 +367,11 @@ final class NarseseGeneratorImpl implements NarseseGenerator, NarseseChars, Nars
           case INHERITANCE:
             writeInheritanceCopula();
             break;
-          case INSTANCE:
-            writeInstanceCopula();
-            break;
-          case INSTANCE_PROPERTY:
-            writeInstancePropertyCopula();
-            break;
           case PREDICTIVE_EQUIVALENCE:
             writePredictiveEquivalenceCopula();
             break;
           case PREDICTIVE_IMPLICATION:
             writePredictiveImplicationCopula();
-            break;
-          case PROPERTY:
-            writePropertyCopula();
             break;
           case RETROSPECTIVE_IMPLICATION:
             writeRetrospectiveImplicationCopula();

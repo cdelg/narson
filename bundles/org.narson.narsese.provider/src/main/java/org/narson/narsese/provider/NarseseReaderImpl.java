@@ -28,6 +28,7 @@ import org.narson.api.narsese.OperationBuilder;
 import org.narson.api.narsese.Query;
 import org.narson.api.narsese.Question;
 import org.narson.api.narsese.Relation;
+import org.narson.api.narsese.SecondaryCopula;
 import org.narson.api.narsese.Sentence;
 import org.narson.api.narsese.Tense;
 import org.narson.api.narsese.Term;
@@ -299,15 +300,15 @@ final class NarseseReaderImpl implements NarseseReader
       case START_INHERITANCE_COPULA:
         return handleRelation(Copula.INHERITANCE);
       case START_INSTANCE_COPULA:
-        return handleRelation(Copula.INSTANCE);
+        return handleRelation(SecondaryCopula.INSTANCE);
       case START_PREDICTIVE_EQUIVALENCE_COPULA:
         return handleRelation(Copula.PREDICTIVE_EQUIVALENCE);
       case START_PREDICTIVE_IMPLICATION_COPULA:
         return handleRelation(Copula.PREDICTIVE_IMPLICATION);
       case START_INSTANCE_PROPERTY_COPULA:
-        return handleRelation(Copula.INSTANCE_PROPERTY);
+        return handleRelation(SecondaryCopula.INSTANCE_PROPERTY);
       case START_PROPERTY_COPULA:
-        return handleRelation(Copula.PROPERTY);
+        return handleRelation(SecondaryCopula.PROPERTY);
       case START_RETROSPECTIVE_IMPLICATION_COPULA:
         return handleRelation(Copula.RETROSPECTIVE_IMPLICATION);
       case START_SIMILARITY_COPULA:
@@ -392,6 +393,16 @@ final class NarseseReaderImpl implements NarseseReader
   }
 
   private Relation handleRelation(Copula copula)
+  {
+    final Relation relation = nf.relation(handleTerm(), copula, handleTerm());
+    if (pop() != Event.END)
+    {
+      bug();
+    }
+    return relation;
+  }
+
+  private Relation handleRelation(SecondaryCopula copula)
   {
     final Relation relation = nf.relation(handleTerm(), copula, handleTerm());
     if (pop() != Event.END)

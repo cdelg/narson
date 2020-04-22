@@ -8,6 +8,7 @@ import org.narson.api.narsese.Connector;
 import org.narson.api.narsese.Copula;
 import org.narson.api.narsese.NarseseFactory;
 import org.narson.api.narsese.Relation;
+import org.narson.api.narsese.SecondaryCopula;
 
 public class NarseseFactoryTest
 {
@@ -125,16 +126,48 @@ public class NarseseFactoryTest
   @Test
   public void testRelation()
   {
+    final Copula c = null;
     assertThrows(NullPointerException.class,
-        () -> nf.relation(null, Copula.INSTANCE, nf.constant("a")));
+        () -> nf.relation(null, Copula.INHERITANCE, nf.constant("a")));
     assertThrows(NullPointerException.class,
-        () -> nf.relation(nf.constant("a"), null, nf.constant("a")));
+        () -> nf.relation(nf.constant("a"), c, nf.constant("a")));
     assertThrows(NullPointerException.class,
-        () -> nf.relation(nf.constant("a"), Copula.INSTANCE, null));
+        () -> nf.relation(nf.constant("a"), Copula.INHERITANCE, null));
 
-    final Relation r = nf.relation(nf.constant("a"), Copula.INSTANCE, nf.constant("b"));
+    final Relation r = nf.relation(nf.constant("a"), Copula.INHERITANCE, nf.constant("b"));
     assertThat(r.getSubject(), equalTo(nf.constant("a")));
-    assertThat(r.getCopula(), equalTo(Copula.INSTANCE));
+    assertThat(r.getCopula(), equalTo(Copula.INHERITANCE));
     assertThat(r.getPredicate(), equalTo(nf.constant("b")));
+  }
+
+  @Test
+  public void testSecondaryRelation()
+  {
+    final SecondaryCopula c = null;
+    assertThrows(NullPointerException.class,
+        () -> nf.relation(null, SecondaryCopula.INSTANCE, nf.constant("a")));
+    assertThrows(NullPointerException.class,
+        () -> nf.relation(nf.constant("a"), c, nf.constant("a")));
+    assertThrows(NullPointerException.class,
+        () -> nf.relation(nf.constant("a"), SecondaryCopula.INSTANCE, null));
+
+    Relation r = nf.relation(nf.constant("a"), SecondaryCopula.INSTANCE, nf.constant("b"));
+    assertThat(r.getSubject(),
+        equalTo(nf.compoundTerm(Connector.EXTENSIONAL_SET).of(nf.constant("a")).build()));
+    assertThat(r.getCopula(), equalTo(Copula.INHERITANCE));
+    assertThat(r.getPredicate(), equalTo(nf.constant("b")));
+
+    r = nf.relation(nf.constant("a"), SecondaryCopula.PROPERTY, nf.constant("b"));
+    assertThat(r.getSubject(), equalTo(nf.constant("a")));
+    assertThat(r.getCopula(), equalTo(Copula.INHERITANCE));
+    assertThat(r.getPredicate(),
+        equalTo(nf.compoundTerm(Connector.INTENSIONAL_SET).of(nf.constant("b")).build()));
+
+    r = nf.relation(nf.constant("a"), SecondaryCopula.INSTANCE_PROPERTY, nf.constant("b"));
+    assertThat(r.getSubject(),
+        equalTo(nf.compoundTerm(Connector.EXTENSIONAL_SET).of(nf.constant("a")).build()));
+    assertThat(r.getCopula(), equalTo(Copula.INHERITANCE));
+    assertThat(r.getPredicate(),
+        equalTo(nf.compoundTerm(Connector.INTENSIONAL_SET).of(nf.constant("b")).build()));
   }
 }

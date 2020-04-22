@@ -72,6 +72,21 @@ public interface NarseseFactory
   Relation relation(Term subject, Copula copula, Term predicate) throws NullPointerException;
 
   /**
+   * Create a new {@link Relation} with the given subject, copula and predicate.
+   * <p>
+   * The specified copula is only used for communication, the returned relation will be rewritten
+   * using a normal {@link Copula}.
+   *
+   * @param subject the subject term of the relation
+   * @param copula the copula of the relation
+   * @param predicate the predicate term of the relation
+   * @return a new {@link Relation}
+   * @throws NullPointerException if any of the parameters is null
+   */
+  Relation relation(Term subject, SecondaryCopula copula, Term predicate)
+      throws NullPointerException;
+
+  /**
    * Create a new {@link CompoundTermBuilder} which can then be used to complete the creation of a
    * {@link CompoundTerm}.
    *
