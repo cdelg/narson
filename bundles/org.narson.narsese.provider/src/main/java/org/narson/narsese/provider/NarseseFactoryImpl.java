@@ -7,6 +7,7 @@ import org.narson.api.narsese.CompoundTermBuilder;
 import org.narson.api.narsese.Connector;
 import org.narson.api.narsese.Constant;
 import org.narson.api.narsese.Copula;
+import org.narson.api.narsese.CopulaTerm;
 import org.narson.api.narsese.DependentVariable;
 import org.narson.api.narsese.DependentVariableBuilder;
 import org.narson.api.narsese.GoalBuilder;
@@ -17,8 +18,8 @@ import org.narson.api.narsese.OperationBuilder;
 import org.narson.api.narsese.Query;
 import org.narson.api.narsese.QueryVariable;
 import org.narson.api.narsese.QuestionBuilder;
-import org.narson.api.narsese.Relation;
 import org.narson.api.narsese.SecondaryCopula;
+import org.narson.api.narsese.Tense;
 import org.narson.api.narsese.Term;
 import org.narson.api.narsese.TruthValue;
 
@@ -77,17 +78,17 @@ final class NarseseFactoryImpl implements NarseseFactory
   }
 
   @Override
-  public Relation relation(Term subject, Copula copula, Term predicate)
+  public CopulaTerm copulaTerm(Term subject, Copula copula, Term predicate)
   {
     checkNotNull(subject, "subject");
     checkNotNull(copula, "copula");
     checkNotNull(predicate, "predicate");
 
-    return new RelationImpl(bufferSize, prefixThreshold, subject, copula, predicate);
+    return new CopulaTermImpl(bufferSize, prefixThreshold, subject, copula, predicate, Tense.NONE);
   }
 
   @Override
-  public Relation relation(Term subject, SecondaryCopula copula, Term predicate)
+  public CopulaTerm copulaTerm(Term subject, SecondaryCopula copula, Term predicate)
   {
     checkNotNull(subject, "subject");
     checkNotNull(copula, "copula");
@@ -96,20 +97,33 @@ final class NarseseFactoryImpl implements NarseseFactory
     switch (copula)
     {
       case INSTANCE:
-        return new RelationImpl(bufferSize, prefixThreshold,
+        return new CopulaTermImpl(bufferSize, prefixThreshold,
             compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), Copula.INHERITANCE,
-            predicate);
+            predicate, Tense.NONE);
       case INSTANCE_PROPERTY:
-        return new RelationImpl(bufferSize, prefixThreshold,
+        return new CopulaTermImpl(bufferSize, prefixThreshold,
             compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), Copula.INHERITANCE,
-            compoundTerm(Connector.INTENSIONAL_SET).of(predicate).build());
+            compoundTerm(Connector.INTENSIONAL_SET).of(predicate).build(), Tense.NONE);
       case PROPERTY:
-        return new RelationImpl(bufferSize, prefixThreshold, subject, Copula.INHERITANCE,
-            compoundTerm(Connector.INTENSIONAL_SET).of(predicate).build());
+        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.INHERITANCE,
+            compoundTerm(Connector.INTENSIONAL_SET).of(predicate).build(), Tense.NONE);
+      case CONCURRENT_EQUIVALENCE:
+        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.EQUIVALENCE,
+            predicate, Tense.PRESENT);
+      case CONCURRENT_IMPLICATION:
+        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.IMPLICATION,
+            predicate, Tense.PRESENT);
+      case PREDICTIVE_EQUIVALENCE:
+        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.EQUIVALENCE,
+            predicate, Tense.FUTURE);
+      case PREDICTIVE_IMPLICATION:
+        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.IMPLICATION,
+            predicate, Tense.FUTURE);
+      case RETROSPECTIVE_IMPLICATION:
+        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.IMPLICATION,
+            predicate, Tense.PAST);
       default:
-        return new RelationImpl(bufferSize, prefixThreshold,
-            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), Copula.INHERITANCE,
-            predicate);
+        throw new IllegalArgumentException("Unknow copula.");
     }
   }
 
@@ -132,7 +146,7 @@ final class NarseseFactoryImpl implements NarseseFactory
   }
 
   @Override
-  public IndependentVariable independantVariable(String name)
+  public IndependentVariable independentVariable(String name)
   {
     checkNotNull(name, "name");
     checkNotEmpty(name, "name");

@@ -1,5 +1,6 @@
 package org.narson.api.narsese;
 
+import javax.management.relation.Relation;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -27,7 +28,7 @@ public interface NarseseValue
     QUESTION,
     QUERY,
     OPERATION,
-    RELATION,
+    COPULA_TERM,
     COMPOUND_TERM,
     CONSTANT,
     INDEPENDENT_VARIABLE,

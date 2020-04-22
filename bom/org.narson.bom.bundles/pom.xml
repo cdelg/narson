@@ -29,6 +29,11 @@
 			<artifactId>org.narson.narsese.provider</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.narson</groupId>
+			<artifactId>org.narson.inference.provider</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -2,6 +2,7 @@ package org.narson.narsese.provider;
 
 import static org.narson.tools.PredChecker.checkNotNull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.narson.api.narsese.Operation;
@@ -44,7 +45,7 @@ final class OperationBuilderImpl implements OperationBuilder
   }
 
   @Override
-  public OperationBuilder on(List<Term> terms)
+  public OperationBuilder on(Collection<Term> terms)
   {
     checkNotNull(terms, "terms");
 

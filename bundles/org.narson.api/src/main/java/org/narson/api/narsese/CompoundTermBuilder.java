@@ -1,6 +1,6 @@
 package org.narson.api.narsese;
 
-import java.util.List;
+import java.util.Collection;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -36,7 +36,7 @@ public interface CompoundTermBuilder
    * @return this builder
    * @throws NullPointerException if terms is null or one of its elements
    */
-  CompoundTermBuilder of(List<Term> terms) throws NullPointerException;
+  CompoundTermBuilder of(Collection<Term> terms) throws NullPointerException;
 
   /**
    * Set the position of the placeholder at the current position in the term list. The position must

@@ -3,13 +3,16 @@ package org.narson.narsese.provider;
 import static org.narson.tools.PredChecker.checkNotNull;
 import static org.narson.tools.PredChecker.checkState;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.CompoundTermBuilder;
 import org.narson.api.narsese.Connector;
 import org.narson.api.narsese.Copula;
+import org.narson.api.narsese.CopulaTerm;
 import org.narson.api.narsese.DependentVariable;
 import org.narson.api.narsese.DependentVariableBuilder;
 import org.narson.api.narsese.Goal;
@@ -27,7 +30,6 @@ import org.narson.api.narsese.Operation;
 import org.narson.api.narsese.OperationBuilder;
 import org.narson.api.narsese.Query;
 import org.narson.api.narsese.Question;
-import org.narson.api.narsese.Relation;
 import org.narson.api.narsese.SecondaryCopula;
 import org.narson.api.narsese.Sentence;
 import org.narson.api.narsese.Tense;
@@ -48,7 +50,7 @@ final class NarseseReaderImpl implements NarseseReader
   }
 
   @Override
-  public Stream<Sentence> read()
+  public Stream<Sentence> stream()
       throws NarseseException, NarseseParsingException, IllegalStateException
   {
     checkState(!closed, "The reader was closed.");
@@ -60,7 +62,7 @@ final class NarseseReaderImpl implements NarseseReader
       @Override
       public boolean hasNext()
       {
-        return currentSentence != null || (currentSentence = readSentence()) != null;
+        return currentSentence != null || (currentSentence = read()) != null;
       }
 
       @Override
@@ -73,7 +75,7 @@ final class NarseseReaderImpl implements NarseseReader
           currentSentence = null;
         } else
         {
-          result = readSentence();
+          result = read();
         }
 
         if (result != null)
@@ -89,6 +91,13 @@ final class NarseseReaderImpl implements NarseseReader
   }
 
   @Override
+  public List<Sentence> readSentences()
+      throws NarseseException, NarseseParsingException, IllegalStateException
+  {
+    return stream().collect(Collectors.toList());
+  }
+
+  @Override
   public int read(Sentence[] sentences)
       throws NarseseException, NarseseParsingException, IllegalStateException
   {
@@ -97,7 +106,7 @@ final class NarseseReaderImpl implements NarseseReader
 
     if (sentences.length != 0)
     {
-      Sentence current = readSentence();
+      Sentence current = read();
       if (current != null)
       {
         int n = 0;
@@ -105,7 +114,7 @@ final class NarseseReaderImpl implements NarseseReader
         {
           n = i;
           sentences[i] = current;
-          current = readSentence();
+          current = read();
         }
         return n + 1;
       } else
@@ -119,8 +128,7 @@ final class NarseseReaderImpl implements NarseseReader
   }
 
   @Override
-  public Sentence readSentence()
-      throws NarseseException, NarseseParsingException, IllegalStateException
+  public Sentence read() throws NarseseException, NarseseParsingException, IllegalStateException
   {
     checkState(!closed, "The reader was closed.");
 
@@ -284,35 +292,35 @@ final class NarseseReaderImpl implements NarseseReader
       case VALUE_QUERY_VARIABLE:
         return nf.queryVariable(parser.getString());
       case VALUE_INDEPENDENT_VARIABLE:
-        return nf.independantVariable(parser.getString());
+        return nf.independentVariable(parser.getString());
       case START_DEPENDENT_VARIABLE:
         return handleDependentVariable(nf.dependentVariable(parser.getString()));
       case START_OPERATION:
         return handleOperation(nf.operation(parser.getString()));
       case START_CONCURRENT_EQUIVALENCE_COPULA:
-        return handleRelation(Copula.CONCURRENT_EQUIVALENCE);
+        return handleCopulaTerm(SecondaryCopula.CONCURRENT_EQUIVALENCE);
       case START_CONCURRENT_IMPLICATION_COPULA:
-        return handleRelation(Copula.CONCURRENT_IMPLICATION);
+        return handleCopulaTerm(SecondaryCopula.CONCURRENT_IMPLICATION);
       case START_EQUIVALENCE_COPULA:
-        return handleRelation(Copula.EQUIVALENCE);
+        return handleCopulaTerm(Copula.EQUIVALENCE);
       case START_IMPLICATION_COPULA:
-        return handleRelation(Copula.IMPLICATION);
+        return handleCopulaTerm(Copula.IMPLICATION);
       case START_INHERITANCE_COPULA:
-        return handleRelation(Copula.INHERITANCE);
+        return handleCopulaTerm(Copula.INHERITANCE);
       case START_INSTANCE_COPULA:
-        return handleRelation(SecondaryCopula.INSTANCE);
+        return handleCopulaTerm(SecondaryCopula.INSTANCE);
       case START_PREDICTIVE_EQUIVALENCE_COPULA:
-        return handleRelation(Copula.PREDICTIVE_EQUIVALENCE);
+        return handleCopulaTerm(SecondaryCopula.PREDICTIVE_EQUIVALENCE);
       case START_PREDICTIVE_IMPLICATION_COPULA:
-        return handleRelation(Copula.PREDICTIVE_IMPLICATION);
+        return handleCopulaTerm(SecondaryCopula.PREDICTIVE_IMPLICATION);
       case START_INSTANCE_PROPERTY_COPULA:
-        return handleRelation(SecondaryCopula.INSTANCE_PROPERTY);
+        return handleCopulaTerm(SecondaryCopula.INSTANCE_PROPERTY);
       case START_PROPERTY_COPULA:
-        return handleRelation(SecondaryCopula.PROPERTY);
+        return handleCopulaTerm(SecondaryCopula.PROPERTY);
       case START_RETROSPECTIVE_IMPLICATION_COPULA:
-        return handleRelation(Copula.RETROSPECTIVE_IMPLICATION);
+        return handleCopulaTerm(SecondaryCopula.RETROSPECTIVE_IMPLICATION);
       case START_SIMILARITY_COPULA:
-        return handleRelation(Copula.SIMILARITY);
+        return handleCopulaTerm(Copula.SIMILARITY);
       case START_CONJUNCTION:
         return handleCompoundTerm(nf.compoundTerm(Connector.CONJUNCTION));
       case START_DISJUNCTION:
@@ -392,24 +400,24 @@ final class NarseseReaderImpl implements NarseseReader
     }
   }
 
-  private Relation handleRelation(Copula copula)
+  private CopulaTerm handleCopulaTerm(Copula copula)
   {
-    final Relation relation = nf.relation(handleTerm(), copula, handleTerm());
+    final CopulaTerm copulaTerm = nf.copulaTerm(handleTerm(), copula, handleTerm());
     if (pop() != Event.END)
     {
       bug();
     }
-    return relation;
+    return copulaTerm;
   }
 
-  private Relation handleRelation(SecondaryCopula copula)
+  private CopulaTerm handleCopulaTerm(SecondaryCopula copula)
   {
-    final Relation relation = nf.relation(handleTerm(), copula, handleTerm());
+    final CopulaTerm copulaTerm = nf.copulaTerm(handleTerm(), copula, handleTerm());
     if (pop() != Event.END)
     {
       bug();
     }
-    return relation;
+    return copulaTerm;
   }
 
   private Event peek()

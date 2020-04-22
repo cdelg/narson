@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.NarseseException;
@@ -29,7 +28,7 @@ public class NarseseParsingGeneratorTest implements NarseseChars
     try (NarseseReader reader = n.createReader(new FileInputStream(
         getClass().getClassLoader().getResource("narsese_sentences.txt").getFile())))
     {
-      firstRound = reader.read().collect(Collectors.toList());
+      firstRound = reader.readSentences();
     }
 
     final StringWriter out = new StringWriter();
@@ -39,7 +38,7 @@ public class NarseseParsingGeneratorTest implements NarseseChars
     }
     try (NarseseReader reader = n.createReader(new StringReader(out.getBuffer().toString())))
     {
-      secondRound = reader.read().collect(Collectors.toList());
+      secondRound = reader.readSentences();
     }
 
     assertThat(firstRound, equalTo(secondRound));

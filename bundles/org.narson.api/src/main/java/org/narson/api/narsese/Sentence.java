@@ -18,4 +18,36 @@ public interface Sentence extends NarseseValue
    * @return the statement of this sentence
    */
   Term getStatement();
+
+  /**
+   * Returns this sentence as a judgment.
+   *
+   * @return this sentence as a judgment
+   * @throws IllegalStateException if this sentence is not a jugdment
+   */
+  Judgment asJudgment() throws IllegalStateException;
+
+  /**
+   * Returns this sentence as a goal.
+   *
+   * @return this sentence as a goal
+   * @throws IllegalStateException if this sentence is not a goal
+   */
+  Goal asGoal() throws IllegalStateException;
+
+  /**
+   * Returns this sentence as a question.
+   *
+   * @return this sentence as a question
+   * @throws IllegalStateException if this sentence is not a question
+   */
+  Question asQuestion() throws IllegalStateException;
+
+  /**
+   * Returns this sentence as a query.
+   *
+   * @return this sentence as a query
+   * @throws IllegalStateException if this sentence is not a query
+   */
+  Query asQuery() throws IllegalStateException;
 }

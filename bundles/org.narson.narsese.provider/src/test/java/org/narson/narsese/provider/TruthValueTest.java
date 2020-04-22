@@ -82,28 +82,6 @@ public class TruthValueTest
   }
 
   @Test
-  public void testRevision()
-  {
-    assertThrows(NullPointerException.class, () -> new TruthValueImpl(1, 0.9).applyRevision(null));
-
-    v1 = new TruthValueImpl(1, 0.9);
-    assertThat(v1.applyRevision(v1).getFrequency(), equalTo(1.0));
-    assertThat(v1.applyRevision(v1).getConfidence(), closeTo(0.9, 0.94));
-
-    v1 = new TruthValueImpl(1, 0.9);
-    assertThat(v1.applyRevision(new TruthValueImpl(1, 0.5)).getFrequency(), equalTo(1.0));
-    assertThat(v1.applyRevision(new TruthValueImpl(1, 0.5)).getConfidence(), closeTo(0.9, 0.01));
-
-    v1 = new TruthValueImpl(1, 0.9);
-    assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.9)).getFrequency(), equalTo(0.6));
-    assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.9)).getConfidence(), closeTo(0.94, 0.01));
-
-    v1 = new TruthValueImpl(1, 0.9);
-    assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.3)).getFrequency(), closeTo(0.96, 0.963));
-    assertThat(v1.applyRevision(new TruthValueImpl(0.2, 0.3)).getConfidence(), closeTo(0.9, 0.904));
-  }
-
-  @Test
   public void testExpectation()
   {
     v1 = new TruthValueImpl(1, 0.9);

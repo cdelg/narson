@@ -4,6 +4,7 @@ import static org.narson.tools.PredChecker.checkArgument;
 import static org.narson.tools.PredChecker.checkNotNull;
 import static org.narson.tools.PredChecker.checkState;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.narson.api.narsese.CompoundTerm;
@@ -48,7 +49,7 @@ final class CompoundTermBuilderImpl implements CompoundTermBuilder
   }
 
   @Override
-  public CompoundTermBuilder of(List<Term> terms)
+  public CompoundTermBuilder of(Collection<Term> terms)
   {
     checkNotNull(terms, "terms");
 

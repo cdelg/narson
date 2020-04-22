@@ -22,9 +22,9 @@ public class AbstractTermTest
   public void testSimplicity()
   {
     assertThat(nf.constant("var").getSyntacticSimplicity(1), equalTo(1.0));
-    assertThat(nf.relation(nf.constant("var"), Copula.IMPLICATION, nf.constant("var"))
+    assertThat(nf.copulaTerm(nf.constant("var"), Copula.IMPLICATION, nf.constant("var"))
         .getSyntacticSimplicity(1), closeTo(0.33, 0.01));
-    assertThat(nf.relation(nf.constant("var"), Copula.IMPLICATION, nf.constant("var"))
+    assertThat(nf.copulaTerm(nf.constant("var"), Copula.IMPLICATION, nf.constant("var"))
         .getSyntacticSimplicity(2), closeTo(0.11, 0.01));
   }
 }

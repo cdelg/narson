@@ -13,8 +13,15 @@ public interface Goal extends Sentence
 {
   /**
    * Returns the desire value of this goal.
-   * 
+   *
    * @return the desire value of this goal
    */
   TruthValue getDesireValue();
+
+  /**
+   * Convert this goal into a query by dropping the desire value.
+   *
+   * @return the derived query
+   */
+  Query toQuery();
 }

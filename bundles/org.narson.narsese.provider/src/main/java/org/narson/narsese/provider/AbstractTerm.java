@@ -3,7 +3,14 @@ package org.narson.narsese.provider;
 import static org.narson.tools.PredChecker.checkArgument;
 import java.io.StringWriter;
 import java.util.concurrent.atomic.AtomicReference;
+import org.narson.api.narsese.CompoundTerm;
+import org.narson.api.narsese.Constant;
+import org.narson.api.narsese.CopulaTerm;
+import org.narson.api.narsese.DependentVariable;
+import org.narson.api.narsese.IndependentVariable;
 import org.narson.api.narsese.NarseseGenerator;
+import org.narson.api.narsese.Operation;
+import org.narson.api.narsese.QueryVariable;
 import org.narson.api.narsese.Term;
 
 abstract class AbstractTerm extends AbstractNarseseValue implements Term
@@ -34,7 +41,7 @@ abstract class AbstractTerm extends AbstractNarseseValue implements Term
   }
 
   @Override
-  public int getSyntacticComplexity()
+  final public int getSyntacticComplexity()
   {
     Integer result = cachedSyntacticComplexity.get();
     if (result == null)
@@ -51,7 +58,7 @@ abstract class AbstractTerm extends AbstractNarseseValue implements Term
   protected abstract int computeSyntacticComplexity();
 
   @Override
-  public double getSyntacticSimplicity(double razorParameter) throws IllegalArgumentException
+  final public double getSyntacticSimplicity(double razorParameter) throws IllegalArgumentException
   {
     checkArgument(0 < razorParameter, "razorParameter <= 0");
     Double result = cachedSyntacticSimplicity.get();
@@ -64,5 +71,90 @@ abstract class AbstractTerm extends AbstractNarseseValue implements Term
       }
     }
     return result;
+  }
+
+
+  @Override
+  final public Operation asOperation() throws IllegalStateException
+  {
+    try
+    {
+      return (Operation) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This term is not an operation.");
+    }
+  }
+
+  @Override
+  final public CopulaTerm asCopulaTerm() throws IllegalStateException
+  {
+    try
+    {
+      return (CopulaTerm) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This term is not a copula term.");
+    }
+  }
+
+  @Override
+  final public CompoundTerm asCompoundTerm() throws IllegalStateException
+  {
+    try
+    {
+      return (CompoundTerm) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This term is not a compound term.");
+    }
+  }
+
+  @Override
+  final public Constant asConstant() throws IllegalStateException
+  {
+    try
+    {
+      return (Constant) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This term is not a constant.");
+    }
+  }
+
+  @Override
+  final public IndependentVariable asIndependentVariable() throws IllegalStateException
+  {
+    try
+    {
+      return (IndependentVariable) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This term is not a independent variable.");
+    }
+  }
+
+  @Override
+  final public DependentVariable asDependentVariable() throws IllegalStateException
+  {
+    try
+    {
+      return (DependentVariable) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This term is not a dependent variable.");
+    }
+  }
+
+  @Override
+  final public QueryVariable asQueryVariable() throws IllegalStateException
+  {
+    try
+    {
+      return (QueryVariable) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This term is not a query variable.");
+    }
   }
 }

@@ -20,6 +20,7 @@
 	<modules>
 		<module>org.narson.api</module>
 		<module>org.narson.narsese.provider</module>
+		<module>org.narson.inference.provider</module>
 	</modules>
 
 	<dependencies>

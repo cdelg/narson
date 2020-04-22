@@ -1,6 +1,8 @@
 package org.narson.narsese.provider;
 
+import java.util.concurrent.atomic.AtomicReference;
 import org.narson.api.narsese.Judgment;
+import org.narson.api.narsese.Question;
 import org.narson.api.narsese.Tense;
 import org.narson.api.narsese.Term;
 import org.narson.api.narsese.TruthValue;
@@ -9,6 +11,7 @@ final class JudgmentImpl extends AbstractSentence implements Judgment
 {
   private final TruthValue truthValue;
   private final Tense tense;
+  private final AtomicReference<Question> cachedQuestion = new AtomicReference<>();
 
   public JudgmentImpl(int bufferSize, int prefixThreshold, Term statement, TruthValue truthValue,
       Tense tense)
@@ -19,19 +22,34 @@ final class JudgmentImpl extends AbstractSentence implements Judgment
   }
 
   @Override
-  public TruthValue getTruthValue()
+  final public TruthValue getTruthValue()
   {
     return truthValue;
   }
 
   @Override
-  public Tense getTense()
+  final public Tense getTense()
   {
     return tense;
   }
 
   @Override
-  public int hashCode()
+  public Question toQuestion()
+  {
+    Question result = cachedQuestion.get();
+    if (result == null)
+    {
+      result = new QuestionImpl(getBufferSize(), getPrefixThreshold(), getStatement(), getTense());
+      if (!cachedQuestion.compareAndSet(null, result))
+      {
+        return cachedQuestion.get();
+      }
+    }
+    return result;
+  }
+
+  @Override
+  final public int hashCode()
   {
     final int prime = 31;
     int result = super.hashCode();
@@ -41,7 +59,7 @@ final class JudgmentImpl extends AbstractSentence implements Judgment
   }
 
   @Override
-  public boolean equals(Object obj)
+  final public boolean equals(Object obj)
   {
     if (!super.equals(obj))
     {

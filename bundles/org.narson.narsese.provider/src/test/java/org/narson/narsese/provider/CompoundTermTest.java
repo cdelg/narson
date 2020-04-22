@@ -1,6 +1,7 @@
 package org.narson.narsese.provider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -23,6 +24,15 @@ public class CompoundTermTest
   {
     assertThat(nf.compoundTerm(Connector.CONJUNCTION).of(nf.constant("a"), nf.constant("a")).build()
         .getValueType(), equalTo(ValueType.COMPOUND_TERM));
+  }
+
+  @Test
+  public void testConvertion()
+  {
+    assertThat(nf.compoundTerm(Connector.CONJUNCTION).of(nf.constant("a"), nf.constant("a")).build()
+        .asCompoundTerm(), is(anything()));
+    assertThrows(IllegalStateException.class, () -> nf.compoundTerm(Connector.CONJUNCTION)
+        .of(nf.constant("a"), nf.constant("a")).build().asConstant());
   }
 
   @Test

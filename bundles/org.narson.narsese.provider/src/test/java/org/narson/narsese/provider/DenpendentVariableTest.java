@@ -1,6 +1,7 @@
 package org.narson.narsese.provider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -28,6 +29,13 @@ public class DenpendentVariableTest
   {
     assertThrows(UnsupportedOperationException.class, () -> nf.dependentVariable("v").dependsOn("a")
         .build().getIndependentVariableNames().add("b"));
+  }
+
+  @Test
+  public void testConvertion()
+  {
+    assertThat(nf.dependentVariable().asDependentVariable(), is(anything()));
+    assertThrows(IllegalStateException.class, () -> nf.dependentVariable().asConstant());
   }
 
   @Test

@@ -1,22 +1,25 @@
 package org.narson.narsese.provider;
 
 import org.narson.api.narsese.Copula;
-import org.narson.api.narsese.Relation;
+import org.narson.api.narsese.CopulaTerm;
+import org.narson.api.narsese.Tense;
 import org.narson.api.narsese.Term;
 
-final class RelationImpl extends AbstractTerm implements Relation
+final class CopulaTermImpl extends AbstractTerm implements CopulaTerm
 {
   private final Term subject;
   private final Copula copula;
   private final Term predicate;
+  private final Tense tense;
 
-  public RelationImpl(int bufferSize, int prefixThreshold, Term subject, Copula copula,
-      Term predicate)
+  public CopulaTermImpl(int bufferSize, int prefixThreshold, Term subject, Copula copula,
+      Term predicate, Tense tense)
   {
-    super(ValueType.RELATION, bufferSize, prefixThreshold);
+    super(ValueType.COPULA_TERM, bufferSize, prefixThreshold);
     this.subject = subject;
     this.copula = copula;
     this.predicate = predicate;
+    this.tense = tense;
   }
 
   @Override
@@ -38,6 +41,12 @@ final class RelationImpl extends AbstractTerm implements Relation
   }
 
   @Override
+  public Tense getTense()
+  {
+    return tense;
+  }
+
+  @Override
   protected int computeSyntacticComplexity()
   {
     return subject.getSyntacticComplexity() + predicate.getSyntacticComplexity() + 1;
@@ -51,6 +60,7 @@ final class RelationImpl extends AbstractTerm implements Relation
     result = prime * result + copula.hashCode();
     result = prime * result + predicate.hashCode();
     result = prime * result + subject.hashCode();
+    result = prime * result + tense.hashCode();
     return result;
   }
 
@@ -61,13 +71,18 @@ final class RelationImpl extends AbstractTerm implements Relation
     {
       return false;
     }
-    if (!(obj instanceof RelationImpl))
+    if (!(obj instanceof CopulaTermImpl))
     {
       return false;
     }
-    final Relation other = (Relation) obj;
+    final CopulaTerm other = (CopulaTerm) obj;
 
     if (copula != other.getCopula())
+    {
+      return false;
+    }
+
+    if (tense != other.getTense())
     {
       return false;
     }

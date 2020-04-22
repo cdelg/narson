@@ -33,8 +33,7 @@ public interface DependentVariableBuilder
       throws NullPointerException;
 
   /**
-   * Add a list of independent variable names upon which the dependent variable being build
-   * dependents.
+   * Add a set of independent variable names upon which the dependent variable being build depends.
    *
    * @param independentVariableNames the independent variable names to add
    * @return this builder

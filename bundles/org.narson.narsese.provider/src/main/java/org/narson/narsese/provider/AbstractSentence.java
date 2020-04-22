@@ -1,7 +1,11 @@
 package org.narson.narsese.provider;
 
 import java.io.StringWriter;
+import org.narson.api.narsese.Goal;
+import org.narson.api.narsese.Judgment;
 import org.narson.api.narsese.NarseseGenerator;
+import org.narson.api.narsese.Query;
+import org.narson.api.narsese.Question;
 import org.narson.api.narsese.Sentence;
 import org.narson.api.narsese.Term;
 
@@ -23,6 +27,64 @@ abstract class AbstractSentence extends AbstractNarseseValue implements Sentence
   final public Term getStatement()
   {
     return statement;
+  }
+
+  final protected int getBufferSize()
+  {
+    return bufferSize;
+  }
+
+  final protected int getPrefixThreshold()
+  {
+    return prefixThreshold;
+  }
+
+  @Override
+  final public Judgment asJudgment() throws IllegalStateException
+  {
+    try
+    {
+      return (Judgment) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This sentence is not a judgment.");
+    }
+  }
+
+  @Override
+  final public Goal asGoal() throws IllegalStateException
+  {
+    try
+    {
+      return (Goal) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This sentence is not a goal.");
+    }
+  }
+
+  @Override
+  final public Question asQuestion() throws IllegalStateException
+  {
+    try
+    {
+      return (Question) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This sentence is not a question.");
+    }
+  }
+
+  @Override
+  final public Query asQuery() throws IllegalStateException
+  {
+    try
+    {
+      return (Query) this;
+    } catch (final ClassCastException e)
+    {
+      throw new IllegalStateException("This sentence is not a query.");
+    }
   }
 
   @Override

@@ -11,6 +11,8 @@ public interface NarseseFactory
   /**
    * Create a new {@link JudgmentBuilder} which can then be used to complete the creation of a
    * {@link Judgment} sentence.
+   * <p>
+   * TODO explain subclass
    *
    * @param statement the sentence's statement
    * @return a new {@link JudgmentBuilder}
@@ -61,29 +63,28 @@ public interface NarseseFactory
   OperationBuilder operation(String name) throws NullPointerException, IllegalArgumentException;
 
   /**
-   * Create a new {@link Relation} with the given subject, copula and predicate.
+   * Create a new {@link CopulaTerm} with the given subject, copula and predicate.
    *
-   * @param subject the subject term of the relation
-   * @param copula the copula of the relation
-   * @param predicate the predicate term of the relation
-   * @return a new {@link Relation}
+   * @param subject the subject term of the copula term
+   * @param copula the copula of the copula term
+   * @param predicate the predicate term of the copula term
+   * @return a new {@link CopulaTerm}
    * @throws NullPointerException if any of the parameters is null
    */
-  Relation relation(Term subject, Copula copula, Term predicate) throws NullPointerException;
+  CopulaTerm copulaTerm(Term subject, Copula copula, Term predicate) throws NullPointerException;
 
   /**
-   * Create a new {@link Relation} with the given subject, copula and predicate.
+   * Create a new {@link CopulaTerm} with the given subject and predicate.
    * <p>
-   * The specified copula is only used for communication, the returned relation will be rewritten
-   * using a normal {@link Copula}.
+   * TODO explain rewritting copulas
    *
-   * @param subject the subject term of the relation
-   * @param copula the copula of the relation
-   * @param predicate the predicate term of the relation
-   * @return a new {@link Relation}
+   * @param subject the subject term of the copula term
+   * @param copula the copula of the copula term
+   * @param predicate the predicate term of the copula term
+   * @return a new {@link CopulaTerm}
    * @throws NullPointerException if any of the parameters is null
    */
-  Relation relation(Term subject, SecondaryCopula copula, Term predicate)
+  CopulaTerm copulaTerm(Term subject, SecondaryCopula copula, Term predicate)
       throws NullPointerException;
 
   /**
@@ -118,7 +119,7 @@ public interface NarseseFactory
    * @throws NullPointerException if name is null
    * @throws IllegalArgumentException if name is not a valid word in the Narsese language
    */
-  IndependentVariable independantVariable(String name)
+  IndependentVariable independentVariable(String name)
       throws NullPointerException, IllegalArgumentException;
 
   /**

@@ -1,9 +1,11 @@
 package org.narson.narsese.provider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.narson.api.narsese.Constant;
 import org.narson.api.narsese.NarseseFactory;
@@ -20,6 +22,13 @@ public class ConstantTest
   public void testRightValueType()
   {
     assertThat(nf.constant("a").getValueType(), equalTo(ValueType.CONSTANT));
+  }
+
+  @Test
+  public void testConvertion()
+  {
+    assertThat(nf.constant("a").asConstant(), is(anything()));
+    assertThrows(IllegalStateException.class, () -> nf.constant("a").asCopulaTerm());
   }
 
   @Test

@@ -1,9 +1,11 @@
 package org.narson.narsese.provider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.narson.api.narsese.NarseseFactory;
 import org.narson.api.narsese.NarseseValue.ValueType;
@@ -33,6 +35,13 @@ public class QueryVariableTest
 
     v1 = nf.queryVariable("");
     assertThat(v1.isAnonymous(), equalTo(true));
+  }
+
+  @Test
+  public void testConvertion()
+  {
+    assertThat(nf.queryVariable().asQueryVariable(), is(anything()));
+    assertThrows(IllegalStateException.class, () -> nf.queryVariable().asConstant());
   }
 
   @Test

@@ -1,6 +1,7 @@
 package org.narson.narsese.provider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -28,6 +29,13 @@ public class OperationTest
   {
     assertThrows(UnsupportedOperationException.class,
         () -> nf.operation("a").build().getTerms().add(nf.constant("a")));
+  }
+
+  @Test
+  public void testConvertion()
+  {
+    assertThat(nf.operation("d").build().asOperation(), is(anything()));
+    assertThrows(IllegalStateException.class, () -> nf.operation("d").build().asConstant());
   }
 
   @Test

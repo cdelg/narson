@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.Connector;
 import org.narson.api.narsese.Constant;
+import org.narson.api.narsese.CopulaTerm;
 import org.narson.api.narsese.DependentVariable;
 import org.narson.api.narsese.Goal;
 import org.narson.api.narsese.IndependentVariable;
@@ -24,7 +25,6 @@ import org.narson.api.narsese.Operation;
 import org.narson.api.narsese.Query;
 import org.narson.api.narsese.QueryVariable;
 import org.narson.api.narsese.Question;
-import org.narson.api.narsese.Relation;
 import org.narson.api.narsese.Term;
 
 final class NarseseGeneratorImpl implements NarseseGenerator, NarseseChars, NarseseOperations
@@ -346,35 +346,51 @@ final class NarseseGeneratorImpl implements NarseseGenerator, NarseseChars, Nars
         write(qu.getStatement());
         writeEnd();
         break;
-      case RELATION:
-        final Relation r = (Relation) value;
+      case COPULA_TERM:
+        final CopulaTerm r = (CopulaTerm) value;
         writeStartCompoundTerm();
         write(r.getSubject());
         switch (r.getCopula())
         {
-          case CONCURRENT_EQUIVALENCE:
-            writeConcurrentEquivalenceCopula();
-            break;
-          case CONCURRENT_IMPLICATION:
-            writeConcurrentImplicationCopula();
-            break;
           case EQUIVALENCE:
-            writeEquivalenceCopula();
+            switch (r.getTense())
+            {
+              case NONE:
+                writeEquivalenceCopula();
+                break;
+              case FUTURE:
+                writePredictiveEquivalenceCopula();
+                break;
+              case PRESENT:
+                writeConcurrentEquivalenceCopula();
+                break;
+              default:
+                writeEquivalenceCopula();
+                break;
+            }
             break;
           case IMPLICATION:
-            writeImplicationCopula();
+            switch (r.getTense())
+            {
+              case NONE:
+                writeImplicationCopula();
+                break;
+              case FUTURE:
+                writePredictiveImplicationCopula();
+                break;
+              case PAST:
+                writeRetrospectiveImplicationCopula();
+                break;
+              case PRESENT:
+                writeConcurrentImplicationCopula();
+                break;
+              default:
+                writeImplicationCopula();
+                break;
+            }
             break;
           case INHERITANCE:
             writeInheritanceCopula();
-            break;
-          case PREDICTIVE_EQUIVALENCE:
-            writePredictiveEquivalenceCopula();
-            break;
-          case PREDICTIVE_IMPLICATION:
-            writePredictiveImplicationCopula();
-            break;
-          case RETROSPECTIVE_IMPLICATION:
-            writeRetrospectiveImplicationCopula();
             break;
           case SIMILARITY:
             writeSimilarityCopula();

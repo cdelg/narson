@@ -1,6 +1,6 @@
 package org.narson.api.narsese;
 
-import java.util.List;
+import java.util.Collection;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -36,7 +36,7 @@ public interface OperationBuilder
    * @return this builder
    * @throws NullPointerException if terms is null or one of its elements
    */
-  OperationBuilder on(List<Term> terms) throws NullPointerException;
+  OperationBuilder on(Collection<Term> terms) throws NullPointerException;
 
   /**
    * Returns a new {@link Operation} object conform to the state of this object builder.

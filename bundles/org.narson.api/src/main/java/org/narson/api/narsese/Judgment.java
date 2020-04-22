@@ -24,4 +24,11 @@ public interface Judgment extends Sentence
    * @return the tense of this judgment
    */
   Tense getTense();
+
+  /**
+   * Convert this judgment into a question by dropping the truth value.
+   *
+   * @return the derived question
+   */
+  Question toQuestion();
 }
