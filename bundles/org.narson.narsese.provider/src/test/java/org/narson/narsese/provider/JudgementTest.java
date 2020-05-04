@@ -14,7 +14,7 @@ import org.narson.api.narsese.Tense;
 
 public class JudgementTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private Judgment v1;
   private Judgment v2;

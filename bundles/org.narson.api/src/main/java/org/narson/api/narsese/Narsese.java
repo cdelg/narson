@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Map;
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -52,26 +53,25 @@ public interface Narsese
   String CONFIG_KEY_DESIREVALUE_CONFIDENCE = "desirevalue.confidence";
 
   /**
-   * Returns the default Narsese factory.
+   * Create a new Narsese provider using the provided configuration.
    *
-   * @return the default Narsese factory
+   * @param configuration a map of properties to configure the Narsese provider.
+   * @return a new Narsese provider
+   * @throws NullPointerException if configuration is null
+   * @throws IllegalArgumentException if the configuration is invalid
+   */
+  Narsese createNarseseProvider(Map<String, Object> configuration)
+      throws NullPointerException, IllegalArgumentException;
+
+  /**
+   * Returns the a Narsese factory.
+   *
+   * @return the a Narsese factory
    */
   NarseseFactory getNarseseFactory();
 
   /**
-   * Create a new Narsese factory using the provided configuration.
-   * <p>
-   * The generator will use the specified configuration.
-   *
-   * @param configuration a map of properties to configure the Narsese language factory.
-   * @return a new Narsese factory
-   * @throws NullPointerException if configuration is null
-   */
-  NarseseFactory createNarseseFactory(Map<String, Object> configuration)
-      throws NullPointerException;
-
-  /**
-   * Create a new generator for writing Narsese the provided i/o stream.
+   * Create a new generator for writing Narsese to the provided i/o stream.
    *
    * @param out i/o stream to which Narsese is written
    * @return a new Narsese generator
@@ -80,20 +80,7 @@ public interface Narsese
   NarseseGenerator createGenerator(OutputStream out) throws NullPointerException;
 
   /**
-   * Create a new generator for writing Narsese the provided i/o stream.
-   * <p>
-   * The generator will use the specified configuration.
-   *
-   * @param out i/o stream to which Narsese is written
-   * @param configuration a map of properties to configure the Narsese writter.
-   * @return a new Narsese generator
-   * @throws NullPointerException if out or configuration is null
-   */
-  NarseseGenerator createGenerator(OutputStream out, Map<String, Object> configuration)
-      throws NullPointerException;
-
-  /**
-   * Create a new generator for writing Narsese the provided i/o stream.
+   * Create a new generator for writing Narsese to the provided i/o stream.
    *
    * @param out i/o stream to which Narsese is written
    * @return a new Narsese generator
@@ -102,20 +89,7 @@ public interface Narsese
   NarseseGenerator createGenerator(Writer out) throws NullPointerException;
 
   /**
-   * Create a new generator for writing Narsese the provided i/o stream.
-   * <p>
-   * The generator will use the specified configuration.
-   *
-   * @param out i/o stream to which Narsese is written
-   * @param configuration a map of properties to configure the Narsese writter.
-   * @return a new Narsese generator
-   * @throws NullPointerException if out or configuration is null
-   */
-  NarseseGenerator createGenerator(Writer out, Map<String, Object> configuration)
-      throws NullPointerException;
-
-  /**
-   * Create a new writer for writing Narsese the provided i/o stream.
+   * Create a new writer for writing Narsese to the provided i/o stream.
    *
    * @param out i/o stream to which Narsese is written
    * @return a new Narsese writter
@@ -124,20 +98,7 @@ public interface Narsese
   NarseseWriter createWriter(OutputStream out) throws NullPointerException;
 
   /**
-   * Create a new writer for writing Narsese the provided i/o stream.
-   * <p>
-   * The writer will use the specified configuration.
-   *
-   * @param out i/o stream to which Narsese is written
-   * @param configuration a map of properties to configure the Narsese writter.
-   * @return a new Narsese writter
-   * @throws NullPointerException if out or configuration is null
-   */
-  NarseseWriter createWriter(OutputStream out, Map<String, Object> configuration)
-      throws NullPointerException;
-
-  /**
-   * Create a new writer for writing Narsese the provided i/o stream.
+   * Create a new writer for writing Narsese to the provided i/o stream.
    *
    * @param out i/o stream to which Narsese is written
    * @return a new Narsese writter
@@ -145,21 +106,14 @@ public interface Narsese
    */
   NarseseWriter createWriter(Writer out) throws NullPointerException;
 
-  /**
-   * Create a new writer for writing Narsese the provided i/o stream.
-   * <p>
-   * The writer will use the specified configuration.
-   *
-   * @param out i/o stream to which Narsese is written
-   * @param configuration a map of properties to configure the Narsese writter.
-   * @return a new Narsese writter
-   * @throws NullPointerException if out or configuration is null
-   */
-  NarseseWriter createWriter(Writer out, Map<String, Object> configuration)
-      throws NullPointerException;
+  NarseseWriting write(Collection<Sentence> sentences) throws NullPointerException;
+
+  NarseseWriting write(Sentence... sentences) throws NullPointerException;
+
+  NarseseWriting write(Sentence sentence) throws NullPointerException;
 
   /**
-   * Create a new parser for reading Narsese from provided i/o stream.
+   * Create a new parser for reading Narsese from the provided i/o stream.
    *
    * @param in i/o stream to which Narsese is to be read
    * @return a new Narsese parser
@@ -168,20 +122,7 @@ public interface Narsese
   NarseseParser createParser(InputStream in) throws NullPointerException;
 
   /**
-   * Create a new parser for reading Narsese from provided i/o stream.
-   * <p>
-   * The parser will use the specified configuration.
-   *
-   * @param in i/o stream to which Narsese is to be read
-   * @param configuration a map of properties to configure the Narsese reader.
-   * @return a new Narsese parser
-   * @throws NullPointerException if in or configuration is null
-   */
-  NarseseParser createParser(InputStream in, Map<String, Object> configuration)
-      throws NullPointerException;
-
-  /**
-   * Create a new parser for reading Narsese from provided i/o stream.
+   * Create a new parser for reading Narsese from the provided i/o stream.
    *
    * @param in i/o stream to which Narsese is to be read
    * @return a new Narsese parser
@@ -190,20 +131,7 @@ public interface Narsese
   NarseseParser createParser(Reader in) throws NullPointerException;
 
   /**
-   * Create a new parser for reading Narsese from provided i/o stream.
-   * <p>
-   * The parser will use the specified configuration.
-   *
-   * @param in i/o stream to which Narsese is to be read
-   * @param configuration a map of properties to configure the Narsese reader.
-   * @return a new Narsese parser
-   * @throws NullPointerException if in or configuration is null
-   */
-  NarseseParser createParser(Reader in, Map<String, Object> configuration)
-      throws NullPointerException;
-
-  /**
-   * Create a new reader for reading Narsese from provided i/o stream.
+   * Create a new reader for reading Narsese from the provided i/o stream.
    *
    * @param in i/o stream to which Narsese is to be read
    * @return a new Narsese reader
@@ -212,20 +140,7 @@ public interface Narsese
   NarseseReader createReader(InputStream in) throws NullPointerException;
 
   /**
-   * Create a new reader for reading Narsese from provided i/o stream.
-   * <p>
-   * The reader will use the specified configuration.
-   *
-   * @param in i/o stream to which Narsese is to be read
-   * @param configuration a map of properties to configure the Narsese reader.
-   * @return a new Narsese reader
-   * @throws NullPointerException if in or configuration is null
-   */
-  NarseseReader createReader(InputStream in, Map<String, Object> configuration)
-      throws NullPointerException;
-
-  /**
-   * Create a new reader for reading Narsese from provided i/o stream.
+   * Create a new reader for reading Narsese from the provided i/o stream.
    *
    * @param in i/o stream to which Narsese is to be read
    * @return a new Narsese reader
@@ -233,16 +148,9 @@ public interface Narsese
    */
   NarseseReader createReader(Reader in) throws NullPointerException;
 
-  /**
-   * Create a new reader for reading Narsese from provided i/o stream.
-   * <p>
-   * The reader will use the specified configuration.
-   *
-   * @param in i/o stream to which Narsese is to be read
-   * @param configuration a map of properties to configure the Narsese reader.
-   * @return a new Narsese reader
-   * @throws NullPointerException if in or configuration is null
-   */
-  NarseseReader createReader(Reader in, Map<String, Object> configuration)
-      throws NullPointerException;
+  NarseseReading read(InputStream in) throws NullPointerException;
+
+  NarseseReading read(Reader in) throws NullPointerException;
+
+  NarseseReading read(String in) throws NullPointerException;
 }

@@ -13,7 +13,7 @@ import org.narson.api.narsese.NarseseValue.ValueType;
 
 public class GoalTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private Goal v1;
   private Goal v2;

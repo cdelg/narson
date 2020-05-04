@@ -15,7 +15,7 @@ import org.narson.api.narsese.Term;
 
 public class CompoundTermBuilderTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   @Test
   public void testWithNullTerm()
@@ -157,9 +157,9 @@ public class CompoundTermBuilderTest
     assertThat(buildCompoundTerm(Connector.EXTENSIONAL_INTERSECTION, 3).getTerms(),
         hasItems(nf.constant("t"), nf.constant("t"), nf.constant("t")));
 
-    assertThat(buildCompoundTerm(Connector.EXTENSIONAL_SET, 2).getTerms().size(), equalTo(2));
+    assertThat(buildCompoundTerm(Connector.EXTENSIONAL_SET, 2).getTerms().size(), equalTo(1));
     assertThat(buildCompoundTerm(Connector.EXTENSIONAL_SET, 2).getTerms(),
-        hasItems(nf.constant("t"), nf.constant("t")));
+        hasItems(nf.constant("t")));
 
     assertThrows(IllegalStateException.class,
         () -> buildCompoundTerm(Connector.INTENSIONAL_DIFFERENCE, 3));
@@ -173,9 +173,9 @@ public class CompoundTermBuilderTest
     assertThat(buildCompoundTerm(Connector.INTENSIONAL_INTERSECTION, 3).getTerms(),
         hasItems(nf.constant("t"), nf.constant("t"), nf.constant("t")));
 
-    assertThat(buildCompoundTerm(Connector.INTENSIONAL_SET, 2).getTerms().size(), equalTo(2));
+    assertThat(buildCompoundTerm(Connector.INTENSIONAL_SET, 2).getTerms().size(), equalTo(1));
     assertThat(buildCompoundTerm(Connector.INTENSIONAL_SET, 2).getTerms(),
-        hasItems(nf.constant("t"), nf.constant("t")));
+        hasItems(nf.constant("t")));
 
     assertThrows(IllegalStateException.class, () -> buildCompoundTerm(Connector.NEGATION, 2));
 

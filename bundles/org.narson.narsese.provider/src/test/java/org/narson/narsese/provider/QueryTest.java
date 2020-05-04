@@ -11,7 +11,7 @@ import org.narson.api.narsese.NarseseValue.ValueType;
 
 public class QueryTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   @Test
   public void testRightValueType()

@@ -4,42 +4,25 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.NarseseException;
-import org.narson.api.narsese.NarseseReader;
-import org.narson.api.narsese.NarseseWriter;
 import org.narson.api.narsese.Sentence;
 
 public class NarseseParsingGeneratorTest implements NarseseChars
 {
-  private final Narsese n = new NarseseLanguage();
+  private final Narsese n = new NarseseProvider();
 
   @Test
   public void testParsingGeneratingWithoutAlteration()
       throws NarseseException, NullPointerException, FileNotFoundException
   {
-    List<Sentence> firstRound = null;
-    List<Sentence> secondRound = null;
+    final FileInputStream input = new FileInputStream(
+        getClass().getClassLoader().getResource("narsese_sentences.txt").getFile());
 
-    try (NarseseReader reader = n.createReader(new FileInputStream(
-        getClass().getClassLoader().getResource("narsese_sentences.txt").getFile())))
-    {
-      firstRound = reader.readSentences();
-    }
-
-    final StringWriter out = new StringWriter();
-    try (NarseseWriter writer = n.createWriter(out))
-    {
-      writer.write(firstRound);
-    }
-    try (NarseseReader reader = n.createReader(new StringReader(out.getBuffer().toString())))
-    {
-      secondRound = reader.readSentences();
-    }
+    final List<Sentence> firstRound = n.read(input).toSentences();
+    final List<Sentence> secondRound = n.read(n.write(firstRound).toOutputString()).toSentences();
 
     assertThat(firstRound, equalTo(secondRound));
   }

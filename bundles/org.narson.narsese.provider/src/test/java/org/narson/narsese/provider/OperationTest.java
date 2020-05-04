@@ -13,7 +13,7 @@ import org.narson.api.narsese.Operation;
 
 public class OperationTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private Operation c1;
   private Operation c2;

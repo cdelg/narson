@@ -45,4 +45,7 @@ public interface CompoundTerm extends Term
    *         placeholder.
    */
   int getPlaceHolderPosition();
+
+  // TODO check equality iwth the recurssive def of compound and a way to reprenset for matching
+  // rule
 }

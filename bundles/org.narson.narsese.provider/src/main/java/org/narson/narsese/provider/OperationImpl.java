@@ -72,4 +72,37 @@ final class OperationImpl extends AbstractTerm implements Operation
 
     return true;
   }
+
+  @Override
+  public int compareTo(Term o)
+  {
+    final int compareType = getValueType().compareTo(o.getValueType());
+    if (compareType < 0)
+    {
+      return -1;
+    }
+    if (compareType > 0)
+    {
+      return 1;
+    } else
+    {
+      return compare(o.asOperation());
+    }
+  }
+
+  private int compare(Operation o)
+  {
+    final int compareName = getName().compareTo(o.getName());
+    if (compareName < 0)
+    {
+      return -1;
+    }
+    if (compareName > 0)
+    {
+      return 1;
+    } else
+    {
+      return ListHelper.compareTerms(getTerms(), o.getTerms());
+    }
+  }
 }

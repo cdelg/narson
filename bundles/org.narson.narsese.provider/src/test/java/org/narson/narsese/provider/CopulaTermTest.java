@@ -15,7 +15,7 @@ import org.narson.api.narsese.SecondaryCopula;
 
 public class CopulaTermTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private CopulaTerm v1;
   private CopulaTerm v2;

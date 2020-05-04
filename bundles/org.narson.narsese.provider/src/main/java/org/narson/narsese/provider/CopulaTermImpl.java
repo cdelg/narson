@@ -57,10 +57,10 @@ final class CopulaTermImpl extends AbstractTerm implements CopulaTerm
   {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + copula.hashCode();
-    result = prime * result + predicate.hashCode();
-    result = prime * result + subject.hashCode();
-    result = prime * result + tense.hashCode();
+    result = prime * result + getCopula().hashCode();
+    result = prime * result + getPredicate().hashCode();
+    result = prime * result + getSubject().hashCode();
+    result = prime * result + getTense().hashCode();
     return result;
   }
 
@@ -71,32 +71,89 @@ final class CopulaTermImpl extends AbstractTerm implements CopulaTerm
     {
       return false;
     }
-    if (!(obj instanceof CopulaTermImpl))
+
+    if (!(obj instanceof CopulaTerm))
     {
       return false;
     }
+
     final CopulaTerm other = (CopulaTerm) obj;
 
-    if (copula != other.getCopula())
+    if (getCopula() != other.getCopula())
     {
       return false;
     }
 
-    if (tense != other.getTense())
+    if (getTense() != other.getTense())
     {
       return false;
     }
 
-    if (!predicate.equals(other.getPredicate()))
+    if (!getPredicate().equals(other.getPredicate()))
     {
       return false;
     }
 
-    if (!subject.equals(other.getSubject()))
+    if (!getSubject().equals(other.getSubject()))
     {
       return false;
     }
 
     return true;
+  }
+
+  @Override
+  public int compareTo(Term o)
+  {
+    final int compareType = getValueType().compareTo(o.getValueType());
+    if (compareType < 0)
+    {
+      return -1;
+    }
+    if (compareType > 0)
+    {
+      return 1;
+    } else
+    {
+      return compare(o.asCopulaTerm());
+    }
+  }
+
+  private int compare(CopulaTerm o)
+  {
+    final int compareSubject = getSubject().compareTo(o.getSubject());
+    if (compareSubject < 0)
+    {
+      return -1;
+    }
+    if (compareSubject > 0)
+    {
+      return 1;
+    } else
+    {
+      final int compareCopula = getCopula().compareTo(o.getCopula());
+      if (compareCopula < 0)
+      {
+        return -1;
+      }
+      if (compareCopula > 0)
+      {
+        return 1;
+      } else
+      {
+        final int comparePredicate = getPredicate().compareTo(o.getPredicate());
+        if (comparePredicate < 0)
+        {
+          return -1;
+        }
+        if (comparePredicate > 0)
+        {
+          return 1;
+        } else
+        {
+          return 0;
+        }
+      }
+    }
   }
 }

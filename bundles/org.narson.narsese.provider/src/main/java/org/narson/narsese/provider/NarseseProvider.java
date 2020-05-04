@@ -4,8 +4,11 @@ import static org.narson.tools.PredChecker.checkNotNull;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,7 +19,10 @@ import org.narson.api.narsese.NarseseFactory;
 import org.narson.api.narsese.NarseseGenerator;
 import org.narson.api.narsese.NarseseParser;
 import org.narson.api.narsese.NarseseReader;
+import org.narson.api.narsese.NarseseReading;
 import org.narson.api.narsese.NarseseWriter;
+import org.narson.api.narsese.NarseseWriting;
+import org.narson.api.narsese.Sentence;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -29,10 +35,10 @@ import org.osgi.util.converter.Converter;
 import org.osgi.util.converter.Converters;
 import org.osgi.util.converter.TypeReference;
 
-@Designate(ocd = NarseseLanguage.Config.class, factory = true)
+@Designate(ocd = NarseseProvider.Config.class, factory = true)
 @Component(configurationPid = "org.narson.narsese",
     configurationPolicy = ConfigurationPolicy.OPTIONAL)
-final public class NarseseLanguage implements Narsese
+final public class NarseseProvider implements Narsese
 {
   @ObjectClassDefinition
   protected @interface Config
@@ -69,32 +75,41 @@ final public class NarseseLanguage implements Narsese
 
   private Config baseConf;
 
-  private NarseseFactory defaultNarseseFactory;
+  private Charset charset;
+
+  private NarseseFactory narseseFactory;
 
   private final Converter converter = Converters.standardConverter();
 
-  public NarseseLanguage()
+  public NarseseProvider()
   {
     this(new HashMap<>());
   }
 
-  public NarseseLanguage(Map<String, Object> configuration)
+  public NarseseProvider(Map<String, Object> configuration)
   {
     checkNotNull(configuration, "configuration");
 
     baseConf = adapt(configuration, true);
-    defaultNarseseFactory = new NarseseFactoryImpl(baseConf.buffer_size(),
-        baseConf.prefix_thresold(),
+    charset = Charset.forName(baseConf.charset());
+    narseseFactory = new NarseseFactoryImpl(baseConf.buffer_size(), baseConf.prefix_thresold(),
         new TruthValueImpl(baseConf.truthvalue_frequency(), baseConf.truthvalue_confidence()),
         new TruthValueImpl(baseConf.desirevalue_frequency(), baseConf.desirevalue_confidence()));
+  }
+
+  private NarseseProvider(Logger logger, Config conf)
+  {
+    this.logger = logger;
+    baseConf = conf;
+    charset = Charset.forName(baseConf.charset());
   }
 
   @Activate
   private void activate(Config configuration)
   {
     baseConf = adapt(configuration);
-    defaultNarseseFactory = new NarseseFactoryImpl(baseConf.buffer_size(),
-        baseConf.prefix_thresold(),
+    charset = Charset.forName(baseConf.charset());
+    narseseFactory = new NarseseFactoryImpl(baseConf.buffer_size(), baseConf.prefix_thresold(),
         new TruthValueImpl(baseConf.truthvalue_frequency(), baseConf.truthvalue_confidence()),
         new TruthValueImpl(baseConf.desirevalue_frequency(), baseConf.desirevalue_confidence()));
   }
@@ -102,36 +117,20 @@ final public class NarseseLanguage implements Narsese
   @Override
   public NarseseFactory getNarseseFactory()
   {
-    return defaultNarseseFactory;
+    return narseseFactory;
   }
 
   @Override
-  public NarseseFactory createNarseseFactory(Map<String, Object> configuration)
+  public Narsese createNarseseProvider(Map<String, Object> configuration)
   {
-    final Config effectiveConf = adapt(checkNotNull(configuration, "configuration"), false);
-
-    return new NarseseFactoryImpl(effectiveConf.buffer_size(), effectiveConf.prefix_thresold(),
-        new TruthValueImpl(effectiveConf.truthvalue_frequency(),
-            effectiveConf.truthvalue_confidence()),
-        new TruthValueImpl(effectiveConf.desirevalue_frequency(),
-            effectiveConf.desirevalue_confidence()));
+    return new NarseseProvider(logger, adapt(checkNotNull(configuration, "configuration"), false));
   }
 
   @Override
   public NarseseGenerator createGenerator(OutputStream out)
   {
-    return new NarseseGeneratorImpl(checkNotNull(out, "out"), Charset.forName(baseConf.charset()),
-        baseConf.buffer_size(), baseConf.prefix_thresold());
-  }
-
-  @Override
-  public NarseseGenerator createGenerator(OutputStream out, Map<String, Object> configuration)
-  {
-    final Config effectiveConf = adapt(checkNotNull(configuration, "configuration"), false);
-
-    return new NarseseGeneratorImpl(checkNotNull(out, "out"),
-        Charset.forName(effectiveConf.charset()), effectiveConf.buffer_size(),
-        effectiveConf.prefix_thresold());
+    return new NarseseGeneratorImpl(checkNotNull(out, "out"), charset, baseConf.buffer_size(),
+        baseConf.prefix_thresold());
   }
 
   @Override
@@ -142,29 +141,10 @@ final public class NarseseLanguage implements Narsese
   }
 
   @Override
-  public NarseseGenerator createGenerator(Writer out, Map<String, Object> configuration)
-  {
-    final Config effectiveConf = adapt(checkNotNull(configuration, "configuration"), false);
-
-    return new NarseseGeneratorImpl(out, effectiveConf.buffer_size(),
-        effectiveConf.prefix_thresold());
-  }
-
-  @Override
   public NarseseWriter createWriter(OutputStream out)
   {
-    return new NarseseWriterImpl(new NarseseGeneratorImpl(checkNotNull(out, "out"),
-        Charset.forName(baseConf.charset()), baseConf.buffer_size(), baseConf.prefix_thresold()));
-  }
-
-  @Override
-  public NarseseWriter createWriter(OutputStream out, Map<String, Object> configuration)
-  {
-    final Config effectiveConf = adapt(checkNotNull(configuration, "configuration"), false);
-
-    return new NarseseWriterImpl(
-        new NarseseGeneratorImpl(checkNotNull(out, "out"), Charset.forName(effectiveConf.charset()),
-            effectiveConf.buffer_size(), effectiveConf.prefix_thresold()));
+    return new NarseseWriterImpl(new NarseseGeneratorImpl(checkNotNull(out, "out"), charset,
+        baseConf.buffer_size(), baseConf.prefix_thresold()));
   }
 
   @Override
@@ -174,28 +154,43 @@ final public class NarseseLanguage implements Narsese
         baseConf.buffer_size(), baseConf.prefix_thresold()));
   }
 
+  @Override
+  public NarseseWriting write(Collection<Sentence> sentences) throws NullPointerException
+  {
+    checkNotNull(sentences, "sentences");
+    return new NarseseWritingImpl(new ArrayList<>(sentences),
+        out -> new NarseseWriterImpl(new NarseseGeneratorImpl(out, charset, baseConf.buffer_size(),
+            baseConf.prefix_thresold())),
+        out -> new NarseseWriterImpl(
+            new NarseseGeneratorImpl(out, baseConf.buffer_size(), baseConf.prefix_thresold())));
+  }
 
   @Override
-  public NarseseWriter createWriter(Writer out, Map<String, Object> configuration)
+  public NarseseWriting write(Sentence... sentences) throws NullPointerException
   {
-    final Config effectiveConf = adapt(checkNotNull(configuration, "configuration"), false);
+    checkNotNull(sentences, "sentences");
+    return new NarseseWritingImpl(sentences,
+        out -> new NarseseWriterImpl(new NarseseGeneratorImpl(out, charset, baseConf.buffer_size(),
+            baseConf.prefix_thresold())),
+        out -> new NarseseWriterImpl(
+            new NarseseGeneratorImpl(out, baseConf.buffer_size(), baseConf.prefix_thresold())));
+  }
 
-    return new NarseseWriterImpl(new NarseseGeneratorImpl(checkNotNull(out, "out"),
-        effectiveConf.buffer_size(), effectiveConf.prefix_thresold()));
+  @Override
+  public NarseseWriting write(Sentence sentence) throws NullPointerException
+  {
+    checkNotNull(sentence, "sentence");
+    return new NarseseSingleWritingImpl(sentence,
+        out -> new NarseseWriterImpl(new NarseseGeneratorImpl(out, charset, baseConf.buffer_size(),
+            baseConf.prefix_thresold())),
+        out -> new NarseseWriterImpl(
+            new NarseseGeneratorImpl(out, baseConf.buffer_size(), baseConf.prefix_thresold())));
   }
 
   @Override
   public NarseseParser createParser(InputStream in)
   {
-    return new NarseseParserImpl(checkNotNull(in, "in"), baseConf.buffer_size());
-  }
-
-  @Override
-  public NarseseParser createParser(InputStream in, Map<String, Object> configuration)
-  {
-    final Config effectiveConf = adapt(checkNotNull(configuration, "configuration"), false);
-
-    return new NarseseParserImpl(checkNotNull(in, "in"), effectiveConf.buffer_size());
+    return new NarseseParserImpl(checkNotNull(in, "in"), charset, baseConf.buffer_size());
   }
 
   @Override
@@ -205,47 +200,42 @@ final public class NarseseLanguage implements Narsese
   }
 
   @Override
-  public NarseseParser createParser(Reader in, Map<String, Object> configuration)
-  {
-    final Config effectiveConf = adapt(checkNotNull(configuration, "configuration"), false);
-
-    return new NarseseParserImpl(checkNotNull(in, "in"), effectiveConf.buffer_size());
-  }
-
-  @Override
   public NarseseReader createReader(InputStream in)
   {
     return new NarseseReaderImpl(
-        new NarseseParserImpl(checkNotNull(in, "in"), baseConf.buffer_size()),
-        defaultNarseseFactory);
-  }
-
-  @Override
-  public NarseseReader createReader(InputStream in, Map<String, Object> configuration)
-  {
-    final Config effectiveConf = adapt(checkNotNull(configuration, "configuration"), false);
-
-    return new NarseseReaderImpl(
-        new NarseseParserImpl(checkNotNull(in, "in"), effectiveConf.buffer_size()),
-        createNarseseFactory(configuration));
+        new NarseseParserImpl(checkNotNull(in, "in"), charset, baseConf.buffer_size()),
+        narseseFactory);
   }
 
   @Override
   public NarseseReader createReader(Reader in)
   {
     return new NarseseReaderImpl(
-        new NarseseParserImpl(checkNotNull(in, "in"), baseConf.buffer_size()),
-        defaultNarseseFactory);
+        new NarseseParserImpl(checkNotNull(in, "in"), baseConf.buffer_size()), narseseFactory);
   }
 
   @Override
-  public NarseseReader createReader(Reader in, Map<String, Object> configuration)
+  public NarseseReading read(InputStream in) throws NullPointerException
   {
-    final Config effectiveConf = adapt(checkNotNull(configuration, "configuration"), false);
+    checkNotNull(in, "in");
+    return new NarseseReadingImpl(() -> new NarseseReaderImpl(
+        new NarseseParserImpl(in, charset, baseConf.buffer_size()), narseseFactory));
+  }
 
-    return new NarseseReaderImpl(
-        new NarseseParserImpl(checkNotNull(in, "in"), effectiveConf.buffer_size()),
-        createNarseseFactory(configuration));
+  @Override
+  public NarseseReading read(Reader in) throws NullPointerException
+  {
+    checkNotNull(in, "in");
+    return new NarseseReadingImpl(() -> new NarseseReaderImpl(
+        new NarseseParserImpl(in, baseConf.buffer_size()), narseseFactory));
+  }
+
+  @Override
+  public NarseseReading read(String in) throws NullPointerException
+  {
+    checkNotNull(in, "in");
+    return new NarseseReadingImpl(() -> new NarseseReaderImpl(
+        new NarseseParserImpl(new StringReader(in), baseConf.buffer_size()), narseseFactory));
   }
 
   private Config adapt(Map<String, Object> configuration, boolean tryLog)

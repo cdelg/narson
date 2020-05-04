@@ -14,7 +14,7 @@ import org.narson.api.narsese.NarseseValue.ValueType;
 
 public class CompoundTermTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private CompoundTerm c1;
   private CompoundTerm c2;

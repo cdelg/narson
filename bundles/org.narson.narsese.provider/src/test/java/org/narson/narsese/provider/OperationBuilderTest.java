@@ -12,7 +12,7 @@ import org.narson.api.narsese.Term;
 
 public class OperationBuilderTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   @Test
   public void testWithNullTerm()

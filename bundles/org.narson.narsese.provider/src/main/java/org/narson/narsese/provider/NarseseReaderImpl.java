@@ -2,12 +2,7 @@ package org.narson.narsese.provider;
 
 import static org.narson.tools.PredChecker.checkNotNull;
 import static org.narson.tools.PredChecker.checkState;
-import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.CompoundTermBuilder;
 import org.narson.api.narsese.Connector;
@@ -47,54 +42,6 @@ final class NarseseReaderImpl implements NarseseReader
   {
     this.parser = parser;
     nf = narseseFactory;
-  }
-
-  @Override
-  public Stream<Sentence> stream()
-      throws NarseseException, NarseseParsingException, IllegalStateException
-  {
-    checkState(!closed, "The reader was closed.");
-
-    final Iterable<Sentence> it = () -> new Iterator<Sentence>()
-    {
-      private Sentence currentSentence = null;
-
-      @Override
-      public boolean hasNext()
-      {
-        return currentSentence != null || (currentSentence = read()) != null;
-      }
-
-      @Override
-      public Sentence next()
-      {
-        Sentence result = null;
-        if (currentSentence != null)
-        {
-          result = currentSentence;
-          currentSentence = null;
-        } else
-        {
-          result = read();
-        }
-
-        if (result != null)
-        {
-          return result;
-        } else
-        {
-          throw new NoSuchElementException();
-        }
-      }
-    };
-    return StreamSupport.stream(it.spliterator(), false);
-  }
-
-  @Override
-  public List<Sentence> readSentences()
-      throws NarseseException, NarseseParsingException, IllegalStateException
-  {
-    return stream().collect(Collectors.toList());
   }
 
   @Override

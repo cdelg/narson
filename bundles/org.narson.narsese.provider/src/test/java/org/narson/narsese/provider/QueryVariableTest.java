@@ -13,7 +13,7 @@ import org.narson.api.narsese.QueryVariable;
 
 public class QueryVariableTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private QueryVariable v1;
   private QueryVariable v2;

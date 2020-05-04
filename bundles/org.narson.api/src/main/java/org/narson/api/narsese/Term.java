@@ -12,7 +12,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * {@link DependentVariable} or a {@link QueryVariable}.
  */
 @ProviderType
-public interface Term extends NarseseValue
+public interface Term extends NarseseValue, Comparable<Term>
 {
   /**
    * Returns the syntactic complexity of this term.

@@ -14,7 +14,7 @@ import org.narson.api.narsese.Tense;
 
 public class QuestionTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private Question v1;
   private Question v2;

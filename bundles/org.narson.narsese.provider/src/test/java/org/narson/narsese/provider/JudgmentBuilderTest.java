@@ -12,7 +12,7 @@ import org.narson.api.narsese.Tense;
 
 public class JudgmentBuilderTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private JudgmentBuilder b;
   private Judgment v;

@@ -14,4 +14,13 @@
 	<name>Narson :: Bundles :: Inference</name>
 
 	<description>This bundles provides the Narsese inference engine.</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.narson</groupId>
+			<artifactId>org.narson.narsese.provider</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>

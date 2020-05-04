@@ -23,17 +23,17 @@ public interface NarseseValue
    */
   public enum ValueType
   {
-    JUDGMENT,
-    GOAL,
-    QUESTION,
-    QUERY,
-    OPERATION,
-    COPULA_TERM,
-    COMPOUND_TERM,
     CONSTANT,
     INDEPENDENT_VARIABLE,
+    QUERY_VARIABLE,
     DEPENDENT_VARIABLE,
-    QUERY_VARIABLE
+    COPULA_TERM,
+    COMPOUND_TERM,
+    OPERATION,
+    QUERY,
+    QUESTION,
+    GOAL,
+    JUDGMENT
   }
 
   /**

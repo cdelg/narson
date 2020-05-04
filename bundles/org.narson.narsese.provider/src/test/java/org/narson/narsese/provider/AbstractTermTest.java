@@ -10,7 +10,7 @@ import org.narson.api.narsese.NarseseFactory;
 
 public class AbstractTermTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   @Test
   public void testToStringJustWorks()

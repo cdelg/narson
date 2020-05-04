@@ -13,7 +13,7 @@ import org.narson.api.narsese.NarseseValue.ValueType;
 
 public class ConstantTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private Constant c1;
   private Constant c2;

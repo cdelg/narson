@@ -6,6 +6,7 @@ import static org.narson.tools.PredChecker.checkState;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.CompoundTermBuilder;
@@ -87,82 +88,35 @@ final class CompoundTermBuilderImpl implements CompoundTermBuilder
   @Override
   public CompoundTerm build()
   {
+    int placeHolder;
+
     if (connector == Connector.INTENSIONAL_IMAGE || connector == Connector.EXTENSIONAL_IMAGE)
     {
       checkState(placeHolderPosition != -1, "placeholder not set");
       checkState(placeHolderPosition <= terms.size() + 1,
           () -> "placeholder position > terms.size() + 1 =" + terms.size() + 1);
-      checkTerms();
 
-      return new CompoundTermImpl(bufferSize, prefixThreshold, connector,
-          Collections.unmodifiableList(new ArrayList<>(terms)), placeHolderPosition);
+      placeHolder = placeHolderPosition;
     } else
     {
-      checkTerms();
-      return new CompoundTermImpl(bufferSize, prefixThreshold, connector,
-          Collections.unmodifiableList(new ArrayList<>(terms)));
+      placeHolder = -1;
     }
-  }
 
-  private void checkTerms()
-  {
-    switch (connector)
+    checkState(connector.minCardinality() <= terms.size(),
+        () -> "terms.size() < " + connector.minCardinality());
+    checkState(terms.size() <= connector.maxCardinality(),
+        () -> "terms.size() > " + connector.maxCardinality());
+
+    final ArrayList<Term> effectiveTerms =
+        connector.hasDistinctComponents() ? new ArrayList<>(new HashSet<>(terms))
+            : new ArrayList<>(terms);
+
+    if (!connector.isOrdered())
     {
-      case CONJUNCTION:
-        checkTermsSup(2);
-        break;
-      case DISJUNCTION:
-        checkTermsSup(2);
-        break;
-      case EXTENSIONAL_DIFFERENCE:
-        checkTermsEqual(2);
-        break;
-      case EXTENSIONAL_IMAGE:
-        checkTermsSup(2);
-        break;
-      case EXTENSIONAL_INTERSECTION:
-        checkTermsSup(2);
-        break;
-      case EXTENSIONAL_SET:
-        checkTermsSup(1);
-        break;
-      case INTENSIONAL_DIFFERENCE:
-        checkTermsEqual(2);
-        break;
-      case INTENSIONAL_IMAGE:
-        checkTermsSup(2);
-        break;
-      case INTENSIONAL_INTERSECTION:
-        checkTermsSup(2);
-        break;
-      case INTENSIONAL_SET:
-        checkTermsSup(1);
-        break;
-      case NEGATION:
-        checkTermsEqual(1);
-        break;
-      case PARALLEL_CONJUNCTION:
-        checkTermsSup(2);
-        break;
-      case PRODUCT:
-        checkTermsSup(2);
-        break;
-      case SEQUENTIAL_CONJUNCTION:
-        checkTermsSup(2);
-        break;
-      default:
-        checkState(false, "Unknown connector");
-        break;
+      Collections.sort(effectiveTerms);
     }
-  }
 
-  private void checkTermsEqual(int c)
-  {
-    checkState(c == terms.size(), () -> "terms.size() != " + c);
-  }
-
-  private void checkTermsSup(int c)
-  {
-    checkState(c <= terms.size(), () -> "terms.size() < " + c);
+    return new CompoundTermImpl(bufferSize, prefixThreshold, connector,
+        Collections.unmodifiableList(effectiveTerms), placeHolder);
   }
 }

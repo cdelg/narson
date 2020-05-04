@@ -3,8 +3,10 @@ package org.narson.narsese.provider;
 import static org.narson.tools.PredChecker.checkArgument;
 import static org.narson.tools.PredChecker.checkNotEmpty;
 import static org.narson.tools.PredChecker.checkNotNull;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.narson.api.narsese.DependentVariable;
 import org.narson.api.narsese.DependentVariableBuilder;
@@ -73,7 +75,10 @@ final class DependentVariableBuilderImpl implements DependentVariableBuilder
   @Override
   public DependentVariable build()
   {
-    return new DependentVariableImpl(bufferSize, name,
-        Collections.unmodifiableSet(new HashSet<>(independentVariableNames)));
+    final List<String> v = new ArrayList<>(independentVariableNames);
+
+    Collections.sort(v);
+
+    return new DependentVariableImpl(bufferSize, name, Collections.unmodifiableList(v));
   }
 }

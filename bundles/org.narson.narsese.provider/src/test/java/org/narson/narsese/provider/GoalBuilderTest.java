@@ -11,7 +11,7 @@ import org.narson.api.narsese.NarseseFactory;
 
 public class GoalBuilderTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private GoalBuilder b;
   private Goal v;

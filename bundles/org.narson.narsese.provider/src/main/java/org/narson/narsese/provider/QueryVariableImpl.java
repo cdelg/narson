@@ -1,6 +1,7 @@
 package org.narson.narsese.provider;
 
 import org.narson.api.narsese.QueryVariable;
+import org.narson.api.narsese.Term;
 
 final class QueryVariableImpl extends AbstractTerm implements QueryVariable
 {
@@ -67,5 +68,38 @@ final class QueryVariableImpl extends AbstractTerm implements QueryVariable
     }
 
     return true;
+  }
+
+  @Override
+  public int compareTo(Term o)
+  {
+    final int compareType = getValueType().compareTo(o.getValueType());
+    if (compareType < 0)
+    {
+      return -1;
+    }
+    if (compareType > 0)
+    {
+      return 1;
+    } else
+    {
+      return compare(o.asQueryVariable());
+    }
+  }
+
+  private int compare(QueryVariable o)
+  {
+    final int compareName = getName().compareTo(o.getName());
+    if (compareName < 0)
+    {
+      return -1;
+    }
+    if (compareName > 0)
+    {
+      return 1;
+    } else
+    {
+      return 0;
+    }
   }
 }

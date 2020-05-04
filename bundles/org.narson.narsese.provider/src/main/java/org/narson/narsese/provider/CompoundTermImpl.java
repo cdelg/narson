@@ -1,8 +1,6 @@
 package org.narson.narsese.provider;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.Connector;
 import org.narson.api.narsese.Term;
@@ -52,35 +50,6 @@ final class CompoundTermImpl extends AbstractTerm implements CompoundTerm
     return getTerms().stream().mapToInt(Term::getSyntacticComplexity).sum() + 1;
   }
 
-  private boolean orderMatters()
-  {
-    return connector == Connector.EXTENSIONAL_DIFFERENCE
-        || connector == Connector.INTENSIONAL_DIFFERENCE || connector == Connector.EXTENSIONAL_IMAGE
-        || connector == Connector.INTENSIONAL_IMAGE
-        || connector == Connector.SEQUENTIAL_CONJUNCTION;
-  }
-
-  private boolean termsUnorderedEquals(List<Term> terms)
-  {
-    if (unmodifiableTerms.size() != terms.size())
-    {
-      return false;
-    }
-    final Map<Term, Integer> freq = new HashMap<>();
-    for (final Term o : unmodifiableTerms)
-    {
-      freq.merge(o, 1, Integer::sum);
-    }
-    for (final Term o : terms)
-    {
-      if (freq.merge(o, -1, Integer::sum) < 0)
-      {
-        return false;
-      }
-    }
-    return true;
-  }
-
   @Override
   public int hashCode()
   {
@@ -119,23 +88,55 @@ final class CompoundTermImpl extends AbstractTerm implements CompoundTerm
       return false;
     }
 
-    if (orderMatters())
+    if (unmodifiableTerms.equals(other.getTerms()))
     {
-      if (unmodifiableTerms.equals(other.getTerms()))
-      {
-        return true;
-      } else
-      {
-        return false;
-      }
+      return true;
     } else
     {
-      if (termsUnorderedEquals(other.getTerms()))
+      return false;
+    }
+  }
+
+  @Override
+  public int compareTo(Term o)
+  {
+    final int compareType = getValueType().compareTo(o.getValueType());
+    if (compareType < 0)
+    {
+      return -1;
+    }
+    if (compareType > 0)
+    {
+      return 1;
+    } else
+    {
+      return compare(o.asCompoundTerm());
+    }
+  }
+
+  private int compare(CompoundTerm o)
+  {
+    final int compareConnector = getConnector().compareTo(o.getConnector());
+    if (compareConnector < 0)
+    {
+      return -1;
+    }
+    if (compareConnector > 0)
+    {
+      return 1;
+    } else
+    {
+      final int comparePlaceholder = getPlaceHolderPosition() - o.getPlaceHolderPosition();
+      if (comparePlaceholder < 0)
       {
-        return true;
+        return -1;
+      }
+      if (comparePlaceholder > 0)
+      {
+        return 1;
       } else
       {
-        return false;
+        return ListHelper.compareTerms(getTerms(), o.getTerms());
       }
     }
   }

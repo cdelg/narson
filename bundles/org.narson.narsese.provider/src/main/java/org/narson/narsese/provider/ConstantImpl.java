@@ -1,6 +1,7 @@
 package org.narson.narsese.provider;
 
 import org.narson.api.narsese.Constant;
+import org.narson.api.narsese.Term;
 
 final class ConstantImpl extends AbstractTerm implements Constant
 {
@@ -54,5 +55,38 @@ final class ConstantImpl extends AbstractTerm implements Constant
     }
 
     return true;
+  }
+
+  @Override
+  public int compareTo(Term o)
+  {
+    final int compareType = getValueType().compareTo(o.getValueType());
+    if (compareType < 0)
+    {
+      return -1;
+    }
+    if (compareType > 0)
+    {
+      return 1;
+    } else
+    {
+      return compare(o.asConstant());
+    }
+  }
+
+  private int compare(Constant o)
+  {
+    final int compareName = getName().compareTo(o.getName());
+    if (compareName < 0)
+    {
+      return -1;
+    }
+    if (compareName > 0)
+    {
+      return 1;
+    } else
+    {
+      return 0;
+    }
   }
 }

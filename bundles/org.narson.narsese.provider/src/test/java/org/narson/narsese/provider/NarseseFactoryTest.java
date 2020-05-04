@@ -13,7 +13,7 @@ import org.narson.api.narsese.Tense;
 
 public class NarseseFactoryTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   @Test
   public void testCompoundTerm()

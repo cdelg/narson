@@ -13,7 +13,7 @@ import org.narson.api.narsese.NarseseValue.ValueType;
 
 public class DenpendentVariableTest
 {
-  private final NarseseFactory nf = new NarseseLanguage().getNarseseFactory();
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
   private DependentVariable v1;
   private DependentVariable v2;

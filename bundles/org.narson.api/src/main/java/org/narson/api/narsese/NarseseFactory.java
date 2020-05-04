@@ -11,8 +11,6 @@ public interface NarseseFactory
   /**
    * Create a new {@link JudgmentBuilder} which can then be used to complete the creation of a
    * {@link Judgment} sentence.
-   * <p>
-   * TODO explain subclass
    *
    * @param statement the sentence's statement
    * @return a new {@link JudgmentBuilder}

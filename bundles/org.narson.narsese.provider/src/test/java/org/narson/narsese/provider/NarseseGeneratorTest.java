@@ -12,7 +12,7 @@ import org.narson.api.narsese.NarseseGenerator;
 
 public class NarseseGeneratorTest implements NarseseChars
 {
-  private final Narsese n = new NarseseLanguage();
+  private final Narsese n = new NarseseProvider();
   private final StringWriter out = new StringWriter();
   private final NarseseGenerator g = n.createGenerator(out);
 
