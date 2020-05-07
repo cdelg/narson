@@ -1,15 +1,16 @@
 package org.narson.narsese.provider;
 
 import org.narson.api.narsese.Constant;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Term;
 
 final class ConstantImpl extends AbstractTerm implements Constant
 {
   private final String name;
 
-  public ConstantImpl(int bufferSize, String name)
+  public ConstantImpl(Narsese narsese, String name)
   {
-    super(ValueType.CONSTANT, bufferSize, 0);
+    super(narsese, ValueType.CONSTANT);
     this.name = name;
   }
 

@@ -1,15 +1,16 @@
 package org.narson.narsese.provider;
 
 import org.narson.api.narsese.IndependentVariable;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Term;
 
 final class IndependentVariableImpl extends AbstractTerm implements IndependentVariable
 {
   private final String name;
 
-  public IndependentVariableImpl(int bufferSize, String name)
+  public IndependentVariableImpl(Narsese narsese, String name)
   {
-    super(ValueType.INDEPENDENT_VARIABLE, bufferSize, 0);
+    super(narsese, ValueType.INDEPENDENT_VARIABLE);
     this.name = name;
   }
 

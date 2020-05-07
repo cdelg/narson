@@ -1,9 +1,8 @@
 package org.narson.narsese.provider;
 
-import java.io.StringWriter;
 import org.narson.api.narsese.Goal;
 import org.narson.api.narsese.Judgment;
-import org.narson.api.narsese.NarseseGenerator;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Query;
 import org.narson.api.narsese.Question;
 import org.narson.api.narsese.Sentence;
@@ -11,15 +10,11 @@ import org.narson.api.narsese.Term;
 
 abstract class AbstractSentence extends AbstractNarseseValue implements Sentence
 {
-  private final int bufferSize;
-  private final int prefixThreshold;
   private final Term statement;
 
-  public AbstractSentence(ValueType valueType, int bufferSize, int prefixThreshold, Term statement)
+  public AbstractSentence(Narsese narsese, ValueType valueType, Term statement)
   {
-    super(valueType);
-    this.bufferSize = bufferSize;
-    this.prefixThreshold = prefixThreshold;
+    super(narsese, valueType);
     this.statement = statement;
   }
 
@@ -27,16 +22,6 @@ abstract class AbstractSentence extends AbstractNarseseValue implements Sentence
   final public Term getStatement()
   {
     return statement;
-  }
-
-  final protected int getBufferSize()
-  {
-    return bufferSize;
-  }
-
-  final protected int getPrefixThreshold()
-  {
-    return prefixThreshold;
   }
 
   @Override
@@ -122,12 +107,6 @@ abstract class AbstractSentence extends AbstractNarseseValue implements Sentence
   @Override
   final public String toString()
   {
-    final StringWriter out = new StringWriter();
-    try (NarseseGenerator generator = new NarseseGeneratorImpl(out, bufferSize, prefixThreshold))
-    {
-      generator.write(this);
-    }
-
-    return out.toString();
+    return narsese.write(this).toOutputString();
   }
 }

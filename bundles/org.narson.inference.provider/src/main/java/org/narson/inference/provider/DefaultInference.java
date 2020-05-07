@@ -1,9 +1,9 @@
 package org.narson.inference.provider;
 
-import org.narson.api.inference.Inference;
+import org.narson.api.inference.InferenceBB;
 import org.narson.api.inference.Inferenciable;
 
-final class DefaultInference implements Inference
+final class DefaultInference implements InferenceBB
 {
   private final Type type;
   private final Inferenciable inferenciable;

@@ -1,12 +1,13 @@
 package org.narson.narsese.provider;
 
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Query;
 import org.narson.api.narsese.Term;
 
 final class QueryImpl extends AbstractSentence implements Query
 {
-  public QueryImpl(int bufferSize, int prefixThreshold, Term statement)
+  public QueryImpl(Narsese narsese, Term statement)
   {
-    super(ValueType.QUERY, bufferSize, prefixThreshold, statement);
+    super(narsese, ValueType.QUERY, statement);
   }
 }

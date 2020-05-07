@@ -1,23 +1,22 @@
 package org.narson.narsese.provider;
 
 import static org.narson.tools.PredChecker.checkArgument;
+import static org.narson.tools.PredChecker.checkNotNull;
 import org.narson.api.narsese.Goal;
 import org.narson.api.narsese.GoalBuilder;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Term;
 import org.narson.api.narsese.TruthValue;
 
 final class GoalBuilderImpl implements GoalBuilder
 {
-  private final int bufferSize;
-  private final int prefixThreshold;
+  private final Narsese narsese;
   private final Term statement;
   private TruthValue desireValue;
 
-  public GoalBuilderImpl(int bufferSize, int prefixThreshold, Term statement,
-      TruthValue defaultDesireValue)
+  public GoalBuilderImpl(Narsese narsese, Term statement, TruthValue defaultDesireValue)
   {
-    this.bufferSize = bufferSize;
-    this.prefixThreshold = prefixThreshold;
+    this.narsese = narsese;
     this.statement = statement;
     desireValue = defaultDesireValue;
   }
@@ -35,8 +34,17 @@ final class GoalBuilderImpl implements GoalBuilder
   }
 
   @Override
+  public GoalBuilder desireValue(TruthValue desireValue) throws NullPointerException
+  {
+    checkNotNull(desireValue, "desireValue");
+
+    this.desireValue = desireValue;
+    return this;
+  }
+
+  @Override
   public Goal build()
   {
-    return new GoalImpl(bufferSize, prefixThreshold, statement, desireValue);
+    return new GoalImpl(narsese, statement, desireValue);
   }
 }

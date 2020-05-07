@@ -43,29 +43,17 @@ final public class NarseseProvider implements Narsese
   @ObjectClassDefinition
   protected @interface Config
   {
-    int prefix_thresold()
+    int prefix_thresold() default 3;
 
-    default 3;
+    int buffer_size() default 1000;
 
-    int buffer_size()
+    String charset() default "UTF-8";
 
-    default 1000;
+    double truthvalue_frequency() default 1;
 
-    String charset()
+    double truthvalue_confidence() default 0.9;
 
-    default "UTF-8";
-
-    double truthvalue_frequency()
-
-    default 1;
-
-    double truthvalue_confidence()
-
-    default 0.9;
-
-    double desirevalue_frequency()
-
-    default 1;
+    double desirevalue_frequency() default 1;
 
     double desirevalue_confidence() default 0.9;
   }
@@ -91,25 +79,27 @@ final public class NarseseProvider implements Narsese
     checkNotNull(configuration, "configuration");
 
     baseConf = adapt(configuration, true);
-    charset = Charset.forName(baseConf.charset());
-    narseseFactory = new NarseseFactoryImpl(baseConf.buffer_size(), baseConf.prefix_thresold(),
-        new TruthValueImpl(baseConf.truthvalue_frequency(), baseConf.truthvalue_confidence()),
-        new TruthValueImpl(baseConf.desirevalue_frequency(), baseConf.desirevalue_confidence()));
+    init();
   }
 
   private NarseseProvider(Logger logger, Config conf)
   {
     this.logger = logger;
     baseConf = conf;
-    charset = Charset.forName(baseConf.charset());
+    init();
   }
 
   @Activate
   private void activate(Config configuration)
   {
     baseConf = adapt(configuration);
+    init();
+  }
+
+  private void init()
+  {
     charset = Charset.forName(baseConf.charset());
-    narseseFactory = new NarseseFactoryImpl(baseConf.buffer_size(), baseConf.prefix_thresold(),
+    narseseFactory = new NarseseFactoryImpl(this,
         new TruthValueImpl(baseConf.truthvalue_frequency(), baseConf.truthvalue_confidence()),
         new TruthValueImpl(baseConf.desirevalue_frequency(), baseConf.desirevalue_confidence()));
   }

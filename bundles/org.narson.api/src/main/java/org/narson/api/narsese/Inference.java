@@ -1,4 +1,4 @@
-package org.narson.api.inference;
+package org.narson.api.narsese;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -27,8 +27,6 @@ public interface Inference
     CONDITIONAL_COMPOSITIONAL_COMPARISON(false),
     CONDITIONAL_COMPOSITIONAL_UNION(true),
     CONDITIONAL_COMPOSITIONAL_INTERSECTION(true),
-    EQUIVALENCE_RULE(true),
-    IMPLICATION_RULE(true),
     COMPOSITIONAL_UNION(true),
     COMPOSITIONAL_INTERSECTION(true),
     COMPOSITIONAL_DIFFERENCE(true);
@@ -48,5 +46,5 @@ public interface Inference
 
   Type getType();
 
-  Inferenciable getInferenciable();
+  Judgment getJudgment();
 }

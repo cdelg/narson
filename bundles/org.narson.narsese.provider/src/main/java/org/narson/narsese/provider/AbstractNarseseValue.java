@@ -1,14 +1,20 @@
 package org.narson.narsese.provider;
 
+import org.narson.api.narsese.Narsese;
+import org.narson.api.narsese.NarseseFactory;
 import org.narson.api.narsese.NarseseValue;
 
 abstract class AbstractNarseseValue implements NarseseValue
 {
+  protected final Narsese narsese;
+  protected final NarseseFactory nf;
   private final ValueType valueType;
 
-  public AbstractNarseseValue(ValueType valueType)
+  public AbstractNarseseValue(Narsese narsese, ValueType valueType)
   {
     this.valueType = valueType;
+    this.narsese = narsese;
+    nf = narsese.getNarseseFactory();
   }
 
   @Override

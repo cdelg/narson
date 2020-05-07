@@ -3,6 +3,7 @@ package org.narson.narsese.provider;
 import java.util.List;
 import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.Connector;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Term;
 
 final class CompoundTermImpl extends AbstractTerm implements CompoundTerm
@@ -11,19 +12,13 @@ final class CompoundTermImpl extends AbstractTerm implements CompoundTerm
   private final List<Term> unmodifiableTerms;
   private final int placeHolderPosition;
 
-  public CompoundTermImpl(int bufferSize, int prefixThreshold, Connector connector,
-      List<Term> unmodifiableTerms, int placeHolderPosition)
+  public CompoundTermImpl(Narsese narsese, Connector connector, List<Term> unmodifiableTerms,
+      int placeHolderPosition)
   {
-    super(ValueType.COMPOUND_TERM, bufferSize, placeHolderPosition);
+    super(narsese, ValueType.COMPOUND_TERM);
     this.connector = connector;
     this.unmodifiableTerms = unmodifiableTerms;
     this.placeHolderPosition = placeHolderPosition;
-  }
-
-  public CompoundTermImpl(int bufferSize, int prefixThreshold, Connector connector,
-      List<Term> unmodifiableTerms)
-  {
-    this(bufferSize, prefixThreshold, connector, unmodifiableTerms, -1);
   }
 
   @Override

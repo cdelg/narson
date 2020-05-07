@@ -1,78 +1,53 @@
 package org.narson.narsese.provider;
 
 import static org.narson.tools.PredChecker.checkArgument;
-import java.io.StringWriter;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.List;
 import org.narson.api.narsese.CompoundTerm;
+import org.narson.api.narsese.Connector;
 import org.narson.api.narsese.Constant;
 import org.narson.api.narsese.CopulaTerm;
 import org.narson.api.narsese.DependentVariable;
 import org.narson.api.narsese.IndependentVariable;
-import org.narson.api.narsese.NarseseGenerator;
+import org.narson.api.narsese.Inference;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Operation;
 import org.narson.api.narsese.QueryVariable;
 import org.narson.api.narsese.Term;
 
 abstract class AbstractTerm extends AbstractNarseseValue implements Term
 {
-  private final int bufferSize;
-  private final int prefixThreshold;
-  private final AtomicReference<Integer> cachedSyntacticComplexity = new AtomicReference<>();
-  private final AtomicReference<Double> cachedSyntacticSimplicity = new AtomicReference<>();
+  private volatile Integer cachedSyntacticComplexity;
+  private volatile Double cachedSyntacticSimplicity;
 
-  public AbstractTerm(ValueType valueType, int bufferSize, int prefixThreshold)
+  public AbstractTerm(Narsese narsese, ValueType valueType)
   {
-    super(valueType);
-    this.bufferSize = bufferSize;
-    this.prefixThreshold = prefixThreshold;
+    super(narsese, valueType);
   }
 
   @Override
   final public String toString()
   {
-    final StringWriter out = new StringWriter();
-    try (NarseseGenerator generator = new NarseseGeneratorImpl(out, bufferSize, prefixThreshold))
-    {
-      generator.write(new QueryImpl(bufferSize, prefixThreshold, this));
-    }
-
-    final String result = out.toString();
+    final String result = narsese.write(new QueryImpl(narsese, this)).toOutputString();
     return result.substring(0, result.length() - 1);
   }
 
   @Override
   final public int getSyntacticComplexity()
   {
-    Integer result = cachedSyntacticComplexity.get();
-    if (result == null)
-    {
-      result = computeSyntacticComplexity();
-      if (!cachedSyntacticComplexity.compareAndSet(null, result))
-      {
-        return cachedSyntacticComplexity.get();
-      }
-    }
-    return result;
+    return cachedSyntacticComplexity != null ? cachedSyntacticComplexity
+        : (cachedSyntacticComplexity = computeSyntacticComplexity());
   }
 
   protected abstract int computeSyntacticComplexity();
 
   @Override
-  final public double getSyntacticSimplicity(double razorParameter) throws IllegalArgumentException
+  final public double getSyntacticSimplicity(double razorParameter)
   {
-    checkArgument(0 < razorParameter, "razorParameter <= 0");
-    Double result = cachedSyntacticSimplicity.get();
-    if (result == null)
-    {
-      result = 1 / Math.pow(getSyntacticComplexity(), razorParameter);
-      if (!cachedSyntacticSimplicity.compareAndSet(null, result))
-      {
-        return cachedSyntacticSimplicity.get();
-      }
-    }
-    return result;
-  }
+    checkArgument(razorParameter > 0, "razorParameter <= 0");
 
+    return cachedSyntacticSimplicity != null ? cachedSyntacticSimplicity
+        : (cachedSyntacticSimplicity = 1 / Math.pow(getSyntacticComplexity(), razorParameter));
+  }
 
   @Override
   final public Operation asOperation() throws IllegalStateException
@@ -156,5 +131,40 @@ abstract class AbstractTerm extends AbstractNarseseValue implements Term
     {
       throw new IllegalStateException("This term is not a query variable.");
     }
+  }
+
+  public void computeInferences(TruthValueImpl truthValue, double evidentialHorizon,
+      List<Inference> inferences)
+  {
+    /* Immediate Negation rule {S} |- !S */
+    inferences.add(new DefaultInference(Inference.Type.IMMEDIATE_NEGATION,
+        nf.judgment(nf.compoundTerm(Connector.NEGATION).of(this).build())
+            .truthValue(truthValue.computeNegation()).build()));
+  }
+
+  public void computeInferences(TruthValueImpl truthValue, Term otherTerm,
+      TruthValueImpl otherTruthValue, double evidentialHorizon, List<Inference> inferences)
+  {
+    // Nothing to do
+    // TODO
+    /*
+     * Higher order conditional strong compositional rules (must have different evidential base and
+     * additional condition???? TODO)
+     */
+    // ruleMachine.addRule("P.", "S.", "(P && S).",
+    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_INTERSECTION, false);
+    // ruleMachine.addRule("P.", "S.", "(P || S).",
+    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_UNION,
+    // false);
+
+    /*
+     * Higher order conditional weak compositional rules (must have different evidential base and
+     * additional condition???? TODO)
+     */
+    // ruleMachine.addRule("P.", "S.", "(S==>P).",
+    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_INDUCTION, false);
+    // ruleMachine.addRule("P.", "S.", "(S<=>P).",
+    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_COMPARISON, false);
+
   }
 }

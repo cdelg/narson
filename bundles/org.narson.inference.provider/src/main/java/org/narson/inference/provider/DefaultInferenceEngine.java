@@ -4,8 +4,8 @@ import static org.narson.tools.PredChecker.checkArgument;
 import static org.narson.tools.PredChecker.checkNotNull;
 import java.util.List;
 import org.narson.api.inference.BasicInferenciable;
-import org.narson.api.inference.Inference;
-import org.narson.api.inference.Inference.Type;
+import org.narson.api.inference.InferenceBB;
+import org.narson.api.inference.InferenceBB.Type;
 import org.narson.api.inference.InferenceEngine;
 import org.narson.api.inference.Inferenciable;
 import org.narson.api.narsese.Judgment;
@@ -38,188 +38,179 @@ final public class DefaultInferenceEngine implements InferenceEngine
     /*
      * First order strong syllogistic rules (must have different evidential base)
      */
-    ruleMachine.addRule("(M-->P).", "(S-->M).", "(S-->P).", Inference.Type.SYLLOGISTIC_DEDUCTION,
+    ruleMachine.addRule("(M-->P).", "(S-->M).", "(S-->P).", InferenceBB.Type.SYLLOGISTIC_DEDUCTION,
         false);
-    ruleMachine.addRule("(P-->M).", "(M-->S).", "(P-->S).", Inference.Type.SYLLOGISTIC_DEDUCTION,
+    ruleMachine.addRule("(P-->M).", "(M-->S).", "(P-->S).", InferenceBB.Type.SYLLOGISTIC_DEDUCTION,
         true);
-    ruleMachine.addRule("(M-->P).", "(S<->M).", "(S-->P).", Inference.Type.SYLLOGISTIC_ANALOGY,
+    ruleMachine.addRule("(M-->P).", "(S<->M).", "(S-->P).", InferenceBB.Type.SYLLOGISTIC_ANALOGY,
         false);
-    ruleMachine.addRule("(P-->M).", "(S<->M).", "(P-->S).", Inference.Type.SYLLOGISTIC_ANALOGY,
+    ruleMachine.addRule("(P-->M).", "(S<->M).", "(P-->S).", InferenceBB.Type.SYLLOGISTIC_ANALOGY,
         false);
-    ruleMachine.addRule("(M<->P).", "(S-->M).", "(S-->P).", Inference.Type.SYLLOGISTIC_ANALOGY,
+    ruleMachine.addRule("(M<->P).", "(S-->M).", "(S-->P).", InferenceBB.Type.SYLLOGISTIC_ANALOGY,
         true);
-    ruleMachine.addRule("(M<->P).", "(M-->S).", "(P-->S).", Inference.Type.SYLLOGISTIC_ANALOGY,
+    ruleMachine.addRule("(M<->P).", "(M-->S).", "(P-->S).", InferenceBB.Type.SYLLOGISTIC_ANALOGY,
         true);
-    ruleMachine.addRule("(M<->P).", "(S<->M).", "(S<->P).", Inference.Type.SYLLOGISTIC_RESEMBLANCE,
-        false);
+    ruleMachine.addRule("(M<->P).", "(S<->M).", "(S<->P).",
+        InferenceBB.Type.SYLLOGISTIC_RESEMBLANCE, false);
 
     /*
      * First order weak syllogistic rules (must have different evidential base)
      */
-    ruleMachine.addRule("(M-->P).", "(M-->S).", "(S-->P).", Inference.Type.SYLLOGISTIC_INDUCTION,
+    ruleMachine.addRule("(M-->P).", "(M-->S).", "(S-->P).", InferenceBB.Type.SYLLOGISTIC_INDUCTION,
         false);
-    ruleMachine.addRule("(M-->P).", "(M-->S).", "(P-->S).", Inference.Type.SYLLOGISTIC_INDUCTION,
+    ruleMachine.addRule("(M-->P).", "(M-->S).", "(P-->S).", InferenceBB.Type.SYLLOGISTIC_INDUCTION,
         true);
-    ruleMachine.addRule("(P-->M).", "(S-->M).", "(S-->P).", Inference.Type.SYLLOGISTIC_ABDUCTION,
+    ruleMachine.addRule("(P-->M).", "(S-->M).", "(S-->P).", InferenceBB.Type.SYLLOGISTIC_ABDUCTION,
         false);
-    ruleMachine.addRule("(P-->M).", "(S-->M).", "(P-->S).", Inference.Type.SYLLOGISTIC_ABDUCTION,
+    ruleMachine.addRule("(P-->M).", "(S-->M).", "(P-->S).", InferenceBB.Type.SYLLOGISTIC_ABDUCTION,
         true);
     ruleMachine.addRule("(M-->P).", "(S-->M).", "(P-->S).",
-        Inference.Type.SYLLOGISTIC_EXEMPLIFICATION, true);
+        InferenceBB.Type.SYLLOGISTIC_EXEMPLIFICATION, true);
     ruleMachine.addRule("(P-->M).", "(M-->S).", "(S-->P).",
-        Inference.Type.SYLLOGISTIC_EXEMPLIFICATION, false);
-    ruleMachine.addRule("(M-->P).", "(M-->S).", "(S<->P).", Inference.Type.SYLLOGISTIC_COMPARISON,
+        InferenceBB.Type.SYLLOGISTIC_EXEMPLIFICATION, false);
+    ruleMachine.addRule("(M-->P).", "(M-->S).", "(S<->P).", InferenceBB.Type.SYLLOGISTIC_COMPARISON,
         false);
-    ruleMachine.addRule("(P-->M).", "(S-->M).", "(S<->P).", Inference.Type.SYLLOGISTIC_COMPARISON,
+    ruleMachine.addRule("(P-->M).", "(S-->M).", "(S<->P).", InferenceBB.Type.SYLLOGISTIC_COMPARISON,
         true);
 
     /*
      * Higher order strong syllogistic rules (must have different evidential base)
      */
-    ruleMachine.addRule("(M==>P).", "(S==>M).", "(S==>P).", Inference.Type.SYLLOGISTIC_DEDUCTION,
+    ruleMachine.addRule("(M==>P).", "(S==>M).", "(S==>P).", InferenceBB.Type.SYLLOGISTIC_DEDUCTION,
         false);
-    ruleMachine.addRule("(P==>M).", "(M==>S).", "(P==>S).", Inference.Type.SYLLOGISTIC_DEDUCTION,
+    ruleMachine.addRule("(P==>M).", "(M==>S).", "(P==>S).", InferenceBB.Type.SYLLOGISTIC_DEDUCTION,
         true);
-    ruleMachine.addRule("(P==>M).", "(S<=>M).", "(P==>S).", Inference.Type.SYLLOGISTIC_ANALOGY,
+    ruleMachine.addRule("(P==>M).", "(S<=>M).", "(P==>S).", InferenceBB.Type.SYLLOGISTIC_ANALOGY,
         false);
-    ruleMachine.addRule("(M<=>P).", "(S==>M).", "(S==>P).", Inference.Type.SYLLOGISTIC_ANALOGY,
+    ruleMachine.addRule("(M<=>P).", "(S==>M).", "(S==>P).", InferenceBB.Type.SYLLOGISTIC_ANALOGY,
         true);
-    ruleMachine.addRule("(M<=>P).", "(M==>S).", "(P==>S).", Inference.Type.SYLLOGISTIC_ANALOGY,
+    ruleMachine.addRule("(M<=>P).", "(M==>S).", "(P==>S).", InferenceBB.Type.SYLLOGISTIC_ANALOGY,
         true);
-    ruleMachine.addRule("(M==>P).", "(S<=>M).", "(S==>P).", Inference.Type.SYLLOGISTIC_ANALOGY,
+    ruleMachine.addRule("(M==>P).", "(S<=>M).", "(S==>P).", InferenceBB.Type.SYLLOGISTIC_ANALOGY,
         false);
-    ruleMachine.addRule("(M<=>P).", "(S<=>M).", "(S<=>P).", Inference.Type.SYLLOGISTIC_RESEMBLANCE,
-        false);
+    ruleMachine.addRule("(M<=>P).", "(S<=>M).", "(S<=>P).",
+        InferenceBB.Type.SYLLOGISTIC_RESEMBLANCE, false);
 
     /*
      * Higher order weak syllogistic rules (must have different evidential base)
      */
 
-    ruleMachine.addRule("(M==>P).", "(M==>S).", "(S==>P).", Inference.Type.SYLLOGISTIC_INDUCTION,
+    ruleMachine.addRule("(M==>P).", "(M==>S).", "(S==>P).", InferenceBB.Type.SYLLOGISTIC_INDUCTION,
         false);
-    ruleMachine.addRule("(M==>P).", "(M==>S).", "(P==>S).", Inference.Type.SYLLOGISTIC_INDUCTION,
+    ruleMachine.addRule("(M==>P).", "(M==>S).", "(P==>S).", InferenceBB.Type.SYLLOGISTIC_INDUCTION,
         true);
-    ruleMachine.addRule("(P==>M).", "(S==>M).", "(S==>P).", Inference.Type.SYLLOGISTIC_ABDUCTION,
+    ruleMachine.addRule("(P==>M).", "(S==>M).", "(S==>P).", InferenceBB.Type.SYLLOGISTIC_ABDUCTION,
         false);
-    ruleMachine.addRule("(P==>M).", "(S==>M).", "(P==>S).", Inference.Type.SYLLOGISTIC_ABDUCTION,
+    ruleMachine.addRule("(P==>M).", "(S==>M).", "(P==>S).", InferenceBB.Type.SYLLOGISTIC_ABDUCTION,
         true);
     ruleMachine.addRule("(M==>P).", "(S==>M).", "(P==>S).",
-        Inference.Type.SYLLOGISTIC_EXEMPLIFICATION, true);
+        InferenceBB.Type.SYLLOGISTIC_EXEMPLIFICATION, true);
     ruleMachine.addRule("(P==>M).", "(M==>S).", "(S==>P).",
-        Inference.Type.SYLLOGISTIC_EXEMPLIFICATION, false);
-    ruleMachine.addRule("(M==>P).", "(M==>S).", "(S<=>P).", Inference.Type.SYLLOGISTIC_COMPARISON,
+        InferenceBB.Type.SYLLOGISTIC_EXEMPLIFICATION, false);
+    ruleMachine.addRule("(M==>P).", "(M==>S).", "(S<=>P).", InferenceBB.Type.SYLLOGISTIC_COMPARISON,
         false);
-    ruleMachine.addRule("(P==>M).", "(S==>M).", "(S<=>P).", Inference.Type.SYLLOGISTIC_COMPARISON,
+    ruleMachine.addRule("(P==>M).", "(S==>M).", "(S<=>P).", InferenceBB.Type.SYLLOGISTIC_COMPARISON,
         true);
 
     /*
      * First order strong compositional rules (must have different evidential base)
      */
     ruleMachine.addRule("(T1-->M).", "(T2-->M).", "((T1 | T2)-->M).",
-        Inference.Type.COMPOSITIONAL_INTERSECTION, false);
+        InferenceBB.Type.COMPOSITIONAL_INTERSECTION, false);
     ruleMachine.addRule("(T1-->M).", "(T2-->M).", "((T1 & T2)-->M).",
-        Inference.Type.COMPOSITIONAL_UNION, false);
+        InferenceBB.Type.COMPOSITIONAL_UNION, false);
     ruleMachine.addRule("(T1-->M).", "(T2-->M).", "((T1 ~ T2)-->M).",
-        Inference.Type.COMPOSITIONAL_DIFFERENCE, false);
+        InferenceBB.Type.COMPOSITIONAL_DIFFERENCE, false);
     ruleMachine.addRule("(T1-->M).", "(T2-->M).", "((T2 ~ T1)-->M).",
-        Inference.Type.COMPOSITIONAL_DIFFERENCE, true);
+        InferenceBB.Type.COMPOSITIONAL_DIFFERENCE, true);
     ruleMachine.addRule("(M-->T1).", "(M-->T2).", "(M-->(T1 & T2)).",
-        Inference.Type.COMPOSITIONAL_INTERSECTION, false);
+        InferenceBB.Type.COMPOSITIONAL_INTERSECTION, false);
     ruleMachine.addRule("(M-->T1).", "(M-->T2).", "(M-->(T1 | T2)).",
-        Inference.Type.COMPOSITIONAL_UNION, false);
+        InferenceBB.Type.COMPOSITIONAL_UNION, false);
     ruleMachine.addRule("(M-->T1).", "(M-->T2).", "(M-->(T1 - T2)).",
-        Inference.Type.COMPOSITIONAL_DIFFERENCE, false);
+        InferenceBB.Type.COMPOSITIONAL_DIFFERENCE, false);
     ruleMachine.addRule("(M-->T1).", "(M-->T2).", "(M-->(T2 - T1)).",
-        Inference.Type.COMPOSITIONAL_DIFFERENCE, true);
+        InferenceBB.Type.COMPOSITIONAL_DIFFERENCE, true);
 
     /*
      * Higher order strong compositional rules (must have different evidential base)
      */
     ruleMachine.addRule("(T1==>M).", "(T2==>M).", "((T1 || T2)==>M).",
-        Inference.Type.COMPOSITIONAL_INTERSECTION, false);
+        InferenceBB.Type.COMPOSITIONAL_INTERSECTION, false);
     ruleMachine.addRule("(T1==>M).", "(T2==>M).", "((T1 && T2)==>M).",
-        Inference.Type.COMPOSITIONAL_UNION, false);
+        InferenceBB.Type.COMPOSITIONAL_UNION, false);
     ruleMachine.addRule("(M==>T1).", "(M==>T2).", "(M==>(T1 && T2)).",
-        Inference.Type.COMPOSITIONAL_INTERSECTION, false);
+        InferenceBB.Type.COMPOSITIONAL_INTERSECTION, false);
     ruleMachine.addRule("(M==>T1).", "(M==>T2).", "(M==>(T1 || T2)).",
-        Inference.Type.COMPOSITIONAL_UNION, false);
+        InferenceBB.Type.COMPOSITIONAL_UNION, false);
 
     /*
      * Higher order conditional strong syllogistic rules (must have different evidential base)
      */
-    ruleMachine.addRule("(M==>P).", "M.", "P.", Inference.Type.CONDITIONAL_SYLLOGISTIC_DEDUCTION,
+    ruleMachine.addRule("(M==>P).", "M.", "P.", InferenceBB.Type.CONDITIONAL_SYLLOGISTIC_DEDUCTION,
         false);
     ruleMachine.addRule("((S && M)==>P).", "M.", "(S==>P).",
-        Inference.Type.CONDITIONAL_SYLLOGISTIC_DEDUCTION, false);
+        InferenceBB.Type.CONDITIONAL_SYLLOGISTIC_DEDUCTION, false);
     ruleMachine.addRule("((Q && M)==>P).", "(S==>M).", "((Q && S)==>P).",
-        Inference.Type.CONDITIONAL_SYLLOGISTIC_DEDUCTION, false);
-    ruleMachine.addRule("(M<=>P).", "M.", "P.", Inference.Type.CONDITIONAL_SYLLOGISTIC_ANALOGY,
+        InferenceBB.Type.CONDITIONAL_SYLLOGISTIC_DEDUCTION, false);
+    ruleMachine.addRule("(M<=>P).", "M.", "P.", InferenceBB.Type.CONDITIONAL_SYLLOGISTIC_ANALOGY,
         true);
 
     /*
      * Higher order conditional weak syllogistic rules (must have different evidential base)
      */
-    ruleMachine.addRule("(P==>M).", "M.", "P.", Inference.Type.CONDITIONAL_SYLLOGISTIC_ABDUCTION,
+    ruleMachine.addRule("(P==>M).", "M.", "P.", InferenceBB.Type.CONDITIONAL_SYLLOGISTIC_ABDUCTION,
         false);
     ruleMachine.addRule("((C && P)==>M).", "(C==>M).", "P.",
-        Inference.Type.CONDITIONAL_SYLLOGISTIC_ABDUCTION, false);
+        InferenceBB.Type.CONDITIONAL_SYLLOGISTIC_ABDUCTION, false);
     ruleMachine.addRule("((C && P)==>M).", "((C && S)==>M).", "(S==>P).",
-        Inference.Type.CONDITIONAL_SYLLOGISTIC_ABDUCTION, false);
+        InferenceBB.Type.CONDITIONAL_SYLLOGISTIC_ABDUCTION, false);
     ruleMachine.addRule("(M==>P).", "S.", "((S && M)==>P).",
-        Inference.Type.CONDITIONAL_SYLLOGISTIC_INDUCTION, false);
+        InferenceBB.Type.CONDITIONAL_SYLLOGISTIC_INDUCTION, false);
     ruleMachine.addRule("((Q && M)==>P).", "(M==>S).", "((Q && S)==>P).",
-        Inference.Type.CONDITIONAL_SYLLOGISTIC_INDUCTION, false);
+        InferenceBB.Type.CONDITIONAL_SYLLOGISTIC_INDUCTION, false);
 
     /*
      * Higher order conditional strong compositional rules (must have different evidential base and
      * additional condition???? TODO)
      */
-    ruleMachine.addRule("P.", "S.", "(P && S).",
-        Inference.Type.CONDITIONAL_COMPOSITIONAL_INTERSECTION, false);
-    ruleMachine.addRule("P.", "S.", "(P || S).", Inference.Type.CONDITIONAL_COMPOSITIONAL_UNION,
-        false);
+    // ruleMachine.addRule("P.", "S.", "(P && S).",
+    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_INTERSECTION, false);
+    // ruleMachine.addRule("P.", "S.", "(P || S).",
+    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_UNION,
+    // false);
 
     /*
      * Higher order conditional weak compositional rules (must have different evidential base and
      * additional condition???? TODO)
      */
-    ruleMachine.addRule("P.", "S.", "(S==>P).", Inference.Type.CONDITIONAL_COMPOSITIONAL_INDUCTION,
-        false);
-    ruleMachine.addRule("P.", "S.", "(S<=>P).", Inference.Type.CONDITIONAL_COMPOSITIONAL_COMPARISON,
-        false);
+    // ruleMachine.addRule("P.", "S.", "(S==>P).",
+    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_INDUCTION, false);
+    // ruleMachine.addRule("P.", "S.", "(S<=>P).",
+    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_COMPARISON, false);
 
     /*
      * First order weak immediate rules
      */
-    ruleMachine.addRule("(P-->S).", "(S-->P).", Inference.Type.IMMEDIATE_CONVERSION, false);
+    ruleMachine.addRule("(P-->S).", "(S-->P).", InferenceBB.Type.IMMEDIATE_CONVERSION, false);
 
     /*
      * Higher order strong immediate rules
      */
-    ruleMachine.addRule("P.", "(!P).", Inference.Type.IMMEDIATE_NEGATION, false);
+    ruleMachine.addRule("P.", "(!P).", InferenceBB.Type.IMMEDIATE_NEGATION, false);
 
     /*
      * Higher order weak immediate rules
      */
-    ruleMachine.addRule("(P==>S).", "(S==>P).", Inference.Type.IMMEDIATE_CONVERSION, false);
-    ruleMachine.addRule("(S==>P).", "((!P)==>(!S)).", Inference.Type.IMMEDIATE_CONTRAPOSITION,
+    ruleMachine.addRule("(P==>S).", "(S==>P).", InferenceBB.Type.IMMEDIATE_CONVERSION, false);
+    ruleMachine.addRule("(S==>P).", "((!P)==>(!S)).", InferenceBB.Type.IMMEDIATE_CONTRAPOSITION,
         false);
 
-    /*
-     * To Verify (structural?)
-     */
-    ruleMachine.addRule("(S<->P).", "(S-->P).", Inference.Type.IMPLICATION_RULE, false);
 
-    ruleMachine.addRule("(S<->P).", "(P<->S).", Inference.Type.EQUIVALENCE_RULE, false);
-
-    ruleMachine.addRule("(S-->{P}).", "(S<->{P}).", Inference.Type.EQUIVALENCE_RULE, false);
-    ruleMachine.addRule("(S<->{P}).", "(S-->{P}).", Inference.Type.EQUIVALENCE_RULE, false);
-    ruleMachine.addRule("([S]-->P).", "([S]<->P).", Inference.Type.EQUIVALENCE_RULE, false);
-    ruleMachine.addRule("([S]<->P).", "([S]-->P).", Inference.Type.EQUIVALENCE_RULE, false);
   }
 
   @Override
-  public Inference choose(Inferenciable inferenciable, Inferenciable otherInferenciable,
+  public InferenceBB choose(Inferenciable inferenciable, Inferenciable otherInferenciable,
       double razorParameter)
   {
     checkNotNull(inferenciable, "inferenciable");
@@ -255,7 +246,7 @@ final public class DefaultInferenceEngine implements InferenceEngine
   }
 
   @Override
-  public Inference revise(Inferenciable inferenciable, Inferenciable otherInferenciable)
+  public InferenceBB revise(Inferenciable inferenciable, Inferenciable otherInferenciable)
   {
     checkNotNull(inferenciable, "inferenciable");
     checkNotNull(otherInferenciable, "otherInferenciable");
@@ -286,7 +277,7 @@ final public class DefaultInferenceEngine implements InferenceEngine
   }
 
   @Override
-  public List<Inference> reason(Inferenciable inferenciable, double evidentialHorizon)
+  public List<InferenceBB> reason(Inferenciable inferenciable, double evidentialHorizon)
   {
     checkNotNull(inferenciable, "inferenciable");
 
@@ -294,7 +285,7 @@ final public class DefaultInferenceEngine implements InferenceEngine
   }
 
   @Override
-  public List<Inference> reason(Inferenciable inferenciable, Inferenciable otherInferenciable,
+  public List<InferenceBB> reason(Inferenciable inferenciable, Inferenciable otherInferenciable,
       double evidentialHorizon)
   {
     checkNotNull(inferenciable, "inferenciable");

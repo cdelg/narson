@@ -1,5 +1,6 @@
 package org.narson.api.narsese;
 
+import java.util.List;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -31,4 +32,12 @@ public interface Judgment extends Sentence
    * @return the derived question
    */
   Question toQuestion();
+
+  Inference choose(Judgment otherJudgment, double razorParameter);
+
+  Inference revise(Judgment otherJudgment);
+
+  List<Inference> reason(double evidentialHorizon);
+
+  List<Inference> reason(Judgment otherJudgment, double evidentialHorizon);
 }

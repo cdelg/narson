@@ -10,16 +10,17 @@ import java.util.List;
 import java.util.Set;
 import org.narson.api.narsese.DependentVariable;
 import org.narson.api.narsese.DependentVariableBuilder;
+import org.narson.api.narsese.Narsese;
 
 final class DependentVariableBuilderImpl implements DependentVariableBuilder
 {
-  private final int bufferSize;
+  private final Narsese narsese;
   private final String name;
   private final Set<String> independentVariableNames = new HashSet<>();
 
-  public DependentVariableBuilderImpl(int bufferSize, String name)
+  public DependentVariableBuilderImpl(Narsese narsese, String name)
   {
-    this.bufferSize = bufferSize;
+    this.narsese = narsese;
     this.name = name;
   }
 
@@ -79,6 +80,6 @@ final class DependentVariableBuilderImpl implements DependentVariableBuilder
 
     Collections.sort(v);
 
-    return new DependentVariableImpl(bufferSize, name, Collections.unmodifiableList(v));
+    return new DependentVariableImpl(narsese, name, Collections.unmodifiableList(v));
   }
 }

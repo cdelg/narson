@@ -5,21 +5,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Operation;
 import org.narson.api.narsese.OperationBuilder;
 import org.narson.api.narsese.Term;
 
 final class OperationBuilderImpl implements OperationBuilder
 {
-  private final int bufferSize;
-  private final int prefixThreshold;
+  private final Narsese narsese;
   private final String name;
   private final List<Term> terms = new ArrayList<>();
 
-  public OperationBuilderImpl(int bufferSize, int prefixThreshold, String name)
+  public OperationBuilderImpl(Narsese narsese, String name)
   {
-    this.bufferSize = bufferSize;
-    this.prefixThreshold = prefixThreshold;
+    this.narsese = narsese;
     this.name = name;
   }
 
@@ -61,7 +60,6 @@ final class OperationBuilderImpl implements OperationBuilder
   @Override
   public Operation build()
   {
-    return new OperationImpl(bufferSize, prefixThreshold, name,
-        Collections.unmodifiableList(new ArrayList<>(terms)));
+    return new OperationImpl(narsese, name, Collections.unmodifiableList(new ArrayList<>(terms)));
   }
 }

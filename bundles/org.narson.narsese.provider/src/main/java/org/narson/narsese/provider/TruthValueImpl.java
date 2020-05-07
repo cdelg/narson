@@ -1,83 +1,60 @@
 package org.narson.narsese.provider;
 
-import static org.narson.tools.PredChecker.checkArgument;
-import java.util.concurrent.atomic.AtomicReference;
 import org.narson.api.narsese.EvidenceAmount;
 import org.narson.api.narsese.FrequencyInterval;
 import org.narson.api.narsese.TruthValue;
 
 final class TruthValueImpl implements TruthValue
 {
-  private final double frequency;
-  private final double confidence;
-  private final AtomicReference<FrequencyInterval> cachedFrequencyInterval =
-      new AtomicReference<>();
-  private final AtomicReference<Double> cachedExpectation = new AtomicReference<>();
+  private final double f1;
+  private final double c1;
+  private volatile FrequencyInterval cachedFrequencyInterval;
+  private volatile Double cachedExpectation;
 
   public TruthValueImpl(double frequency, double confidence)
   {
-    this.frequency = frequency;
-    this.confidence = confidence;
+    this(frequency, confidence, null);
   }
 
   public TruthValueImpl(double frequency, double confidence, FrequencyInterval frequencyInterval)
   {
-    this.frequency = frequency;
-    this.confidence = confidence;
-    cachedFrequencyInterval.set(frequencyInterval);
+    f1 = frequency;
+    c1 = confidence;
+    cachedFrequencyInterval = frequencyInterval;
   }
 
   @Override
   public double getFrequency()
   {
-    return frequency;
+    return f1;
   }
 
   @Override
   public double getConfidence()
   {
-    return confidence;
+    return c1;
   }
 
   @Override
   public double getExpectation()
   {
-    Double result = cachedExpectation.get();
-    if (result == null)
-    {
-      result = confidence * (frequency - 0.5) + 0.5;
-      if (!cachedExpectation.compareAndSet(null, result))
-      {
-        return cachedExpectation.get();
-      }
-    }
-    return result;
+    return cachedExpectation != null ? cachedExpectation
+        : (cachedExpectation = c1 * (f1 - 0.5) + 0.5);
   }
 
   @Override
   public FrequencyInterval toFrequencyInterval()
   {
-    FrequencyInterval result = cachedFrequencyInterval.get();
-    if (result == null)
-    {
-      result =
-          new FrequencyIntervalImpl(frequency * confidence, 1 - confidence * (1 - frequency), this);
-      if (!cachedFrequencyInterval.compareAndSet(null, result))
-      {
-        return cachedFrequencyInterval.get();
-      }
-    }
-    return result;
+    return cachedFrequencyInterval != null ? cachedFrequencyInterval
+        : (cachedFrequencyInterval = new FrequencyIntervalImpl(f1 * c1, 1 - c1 * (1 - f1), this));
   }
 
   @Override
-  public EvidenceAmount toEvidenceAmount(double evidentialHorizon) throws IllegalArgumentException
+  public EvidenceAmount toEvidenceAmount(double evidentialHorizon)
   {
-    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
-    return new EvidenceAmountImpl(evidentialHorizon * frequency * confidence / (1 - confidence),
-        evidentialHorizon * confidence / (1 - confidence));
+    return new EvidenceAmountImpl(evidentialHorizon * f1 * c1 / (1 - c1),
+        evidentialHorizon * c1 / (1 - c1));
   }
-
 
   @Override
   public int hashCode()
@@ -85,9 +62,9 @@ final class TruthValueImpl implements TruthValue
     final int prime = 31;
     int result = 1;
     long temp;
-    temp = Double.doubleToLongBits(confidence);
+    temp = Double.doubleToLongBits(c1);
     result = prime * result + (int) (temp ^ (temp >>> 32));
-    temp = Double.doubleToLongBits(frequency);
+    temp = Double.doubleToLongBits(f1);
     result = prime * result + (int) (temp ^ (temp >>> 32));
     return result;
   }
@@ -107,12 +84,12 @@ final class TruthValueImpl implements TruthValue
 
     final TruthValue other = (TruthValue) obj;
 
-    if (Double.doubleToLongBits(confidence) != Double.doubleToLongBits(other.getConfidence()))
+    if (Double.doubleToLongBits(c1) != Double.doubleToLongBits(other.getConfidence()))
     {
       return false;
     }
 
-    if (Double.doubleToLongBits(frequency) != Double.doubleToLongBits(other.getFrequency()))
+    if (Double.doubleToLongBits(f1) != Double.doubleToLongBits(other.getFrequency()))
     {
       return false;
     }
@@ -126,11 +103,131 @@ final class TruthValueImpl implements TruthValue
     final StringBuilder sb = new StringBuilder();
 
     sb.append(NarseseChars.CHAR_START_END_TRUTH);
-    sb.append(frequency);
+    sb.append(f1);
     sb.append(NarseseChars.CHAR_TRUTH_SEPARATOR);
-    sb.append(confidence);
+    sb.append(c1);
     sb.append(NarseseChars.CHAR_START_END_TRUTH);
 
     return sb.toString();
+  }
+
+  public TruthValue computeDeduction(TruthValue other)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+
+    final double f = f1 * f2;
+
+    return new TruthValueImpl(f, f * c1 * c2);
+  }
+
+  public TruthValue computeAnalogy(TruthValue other)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+
+    return new TruthValueImpl(f1 * f2, f2 * c1 * c2);
+  }
+
+  public TruthValue computeResemblance(TruthValue other)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+
+    return new TruthValueImpl(f1 * f2, (f1 + f2 - f1 * f2) * c1 * c2);
+  }
+
+  public TruthValue computeAbduction(TruthValue other, double evidentialHorizon)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+    final double pw = f1 * f2 * c1 * c2;
+    final double w = f1 * c1 * c2;
+
+    return new TruthValueImpl(pw / w, w / (w + evidentialHorizon));
+  }
+
+  public TruthValue computeInduction(TruthValue other, double evidentialHorizon)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+    final double pw = f1 * f2 * c1 * c2;
+    final double w = f2 * c1 * c2;
+
+    return new TruthValueImpl(pw / w, w / (w + evidentialHorizon));
+  }
+
+  public TruthValue computeExemplification(TruthValue other, double evidentialHorizon)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+    final double w = f1 * f2 * c1 * c2;
+
+    return new TruthValueImpl(1.0, w / (w + evidentialHorizon));
+  }
+
+  public TruthValue computeComparison(TruthValue other, double evidentialHorizon)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+    final double pw = f1 * f2 * c1 * c2;
+    final double w = (f1 + f2 - f1 * f2) * c1 * c2;
+
+    return new TruthValueImpl(pw / w, w / (w + evidentialHorizon));
+  }
+
+  public TruthValue computeConversion(double evidentialHorizon)
+  {
+    final double w = f1 * c1;
+
+    return new TruthValueImpl(1.0, w / (w + evidentialHorizon));
+  }
+
+  public TruthValue computeContraposition(double evidentialHorizon)
+  {
+    final double w = (1 - f1) * c1;
+
+    return new TruthValueImpl(0.0, w / (w + evidentialHorizon));
+  }
+
+  public TruthValue computeNegation()
+  {
+    return new TruthValueImpl(1 - f1, c1);
+  }
+
+  public TruthValue computeIntersection(TruthValue other)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+
+    return new TruthValueImpl(f1 * f2, c1 * c2);
+  }
+
+  public TruthValue computeUnion(TruthValue other)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+
+    return new TruthValueImpl(1 - (1 - f1) * (1 - f2), c1 * c2);
+  }
+
+  public TruthValue computeDifference(TruthValue other)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+
+    return new TruthValueImpl(f1 * (1 - f2), c1 * c2);
+  }
+
+  public TruthValue computeRevision(TruthValue other)
+  {
+    final double f2 = other.getFrequency();
+    final double c2 = other.getConfidence();
+
+    final double c1c2 = c1 * (1 - c2);
+    final double c2c1 = c2 * (1 - c1);
+    final double d = c1c2 + c2c1;
+
+    return new TruthValueImpl((f1 * c1c2 + f2 * c2c1) / d, d / (c1c2 + c2c1 + (1 - c1) * (1 - c2)));
   }
 }

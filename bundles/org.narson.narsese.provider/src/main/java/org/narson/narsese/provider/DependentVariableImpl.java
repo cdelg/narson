@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.narson.api.narsese.DependentVariable;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Term;
 
 final class DependentVariableImpl extends AbstractTerm implements DependentVariable
@@ -12,21 +13,15 @@ final class DependentVariableImpl extends AbstractTerm implements DependentVaria
   private final List<String> unmodifiableIndependentVariableNames;
   private final boolean anonymous;
 
-  public DependentVariableImpl(int bufferSize, String name,
+  public DependentVariableImpl(Narsese narsese, String name,
       List<String> unmodifiableIndependentVariableNames)
   {
-    super(ValueType.DEPENDENT_VARIABLE, bufferSize, 0);
+    super(narsese, ValueType.DEPENDENT_VARIABLE);
     this.name = name;
     anonymous = this.name.isEmpty();
     this.unmodifiableIndependentVariableNames =
-        anonymous && !unmodifiableIndependentVariableNames.isEmpty()
-            ? Collections.unmodifiableList(new ArrayList<>())
+        anonymous ? Collections.unmodifiableList(new ArrayList<>())
             : unmodifiableIndependentVariableNames;
-  }
-
-  public DependentVariableImpl(int bufferSize)
-  {
-    this(bufferSize, "", Collections.unmodifiableList(new ArrayList<>()));
   }
 
   @Override

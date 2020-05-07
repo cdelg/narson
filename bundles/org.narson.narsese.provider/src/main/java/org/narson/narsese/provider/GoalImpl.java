@@ -1,7 +1,7 @@
 package org.narson.narsese.provider;
 
-import java.util.concurrent.atomic.AtomicReference;
 import org.narson.api.narsese.Goal;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Query;
 import org.narson.api.narsese.Term;
 import org.narson.api.narsese.TruthValue;
@@ -9,11 +9,11 @@ import org.narson.api.narsese.TruthValue;
 final class GoalImpl extends AbstractSentence implements Goal
 {
   private final TruthValue desireValue;
-  private final AtomicReference<Query> cachedQuery = new AtomicReference<>();
+  private volatile Query cachedQuery;
 
-  public GoalImpl(int bufferSize, int prefixThreshold, Term statement, TruthValue desireValue)
+  public GoalImpl(Narsese narsese, Term statement, TruthValue desireValue)
   {
-    super(ValueType.GOAL, bufferSize, prefixThreshold, statement);
+    super(narsese, ValueType.GOAL, statement);
     this.desireValue = desireValue;
   }
 
@@ -26,16 +26,8 @@ final class GoalImpl extends AbstractSentence implements Goal
   @Override
   public Query toQuery()
   {
-    Query result = cachedQuery.get();
-    if (result == null)
-    {
-      result = new QueryImpl(getBufferSize(), getPrefixThreshold(), getStatement());
-      if (!cachedQuery.compareAndSet(null, result))
-      {
-        return cachedQuery.get();
-      }
-    }
-    return result;
+    return cachedQuery != null ? cachedQuery
+        : (cachedQuery = new QueryImpl(narsese, getStatement()));
   }
 
   @Override

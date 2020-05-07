@@ -24,6 +24,15 @@ public interface GoalBuilder
   GoalBuilder desireValue(double frequency, double confidence) throws IllegalArgumentException;
 
   /**
+   * Set the given desire value for the goal being built.
+   *
+   * @param desireValue the desire value
+   * @return this builder
+   * @throws IllegalArgumentException if desireValue is null
+   */
+  GoalBuilder desireValue(TruthValue desireValue) throws NullPointerException;
+
+  /**
    * Returns a new {@link Goal} object conform to the state of this object builder.
    *
    * @return a new {@link Goal} object conform to the state of this object builder

@@ -1,5 +1,6 @@
 package org.narson.narsese.provider;
 
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Question;
 import org.narson.api.narsese.Tense;
 import org.narson.api.narsese.Term;
@@ -8,9 +9,9 @@ final class QuestionImpl extends AbstractSentence implements Question
 {
   private final Tense tense;
 
-  public QuestionImpl(int bufferSize, int prefixThreshold, Term statement, Tense tense)
+  public QuestionImpl(Narsese narsese, Term statement, Tense tense)
   {
-    super(ValueType.QUESTION, bufferSize, prefixThreshold, statement);
+    super(narsese, ValueType.QUESTION, statement);
     this.tense = tense;
   }
 

@@ -3,6 +3,7 @@ package org.narson.narsese.provider;
 import static org.narson.tools.PredChecker.checkArgument;
 import static org.narson.tools.PredChecker.checkNotEmpty;
 import static org.narson.tools.PredChecker.checkNotNull;
+import java.util.ArrayList;
 import org.narson.api.narsese.CompoundTermBuilder;
 import org.narson.api.narsese.Connector;
 import org.narson.api.narsese.Constant;
@@ -13,6 +14,7 @@ import org.narson.api.narsese.DependentVariableBuilder;
 import org.narson.api.narsese.GoalBuilder;
 import org.narson.api.narsese.IndependentVariable;
 import org.narson.api.narsese.JudgmentBuilder;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.NarseseFactory;
 import org.narson.api.narsese.OperationBuilder;
 import org.narson.api.narsese.Query;
@@ -25,16 +27,14 @@ import org.narson.api.narsese.TruthValue;
 
 final class NarseseFactoryImpl implements NarseseFactory
 {
-  private final int bufferSize;
-  private final int prefixThreshold;
+  private final Narsese narsese;
   private final TruthValue defaultTruthValue;
   private final TruthValue defaultDesireValue;
 
-  public NarseseFactoryImpl(int bufferSize, int prefixThreshold, TruthValue defaultTruthValue,
+  public NarseseFactoryImpl(Narsese narsese, TruthValue defaultTruthValue,
       TruthValue defaultDesireValue)
   {
-    this.bufferSize = bufferSize;
-    this.prefixThreshold = prefixThreshold;
+    this.narsese = narsese;
     this.defaultTruthValue = defaultTruthValue;
     this.defaultDesireValue = defaultDesireValue;
   }
@@ -43,28 +43,28 @@ final class NarseseFactoryImpl implements NarseseFactory
   public JudgmentBuilder judgment(Term statement)
   {
     checkNotNull(statement, "statement");
-    return new JudgmentBuilderImpl(bufferSize, prefixThreshold, statement, defaultTruthValue);
+    return new JudgmentBuilderImpl(narsese, statement, defaultTruthValue);
   }
 
   @Override
   public QuestionBuilder question(Term statement)
   {
     checkNotNull(statement, "statement");
-    return new QuestionBuilderImpl(bufferSize, prefixThreshold, statement);
+    return new QuestionBuilderImpl(narsese, statement);
   }
 
   @Override
   public GoalBuilder goal(Term statement)
   {
     checkNotNull(statement, "statement");
-    return new GoalBuilderImpl(bufferSize, prefixThreshold, statement, defaultDesireValue);
+    return new GoalBuilderImpl(narsese, statement, defaultDesireValue);
   }
 
   @Override
   public Query query(Term statement)
   {
     checkNotNull(statement, "statement");
-    return new QueryImpl(bufferSize, prefixThreshold, statement);
+    return new QueryImpl(narsese, statement);
   }
 
   @Override
@@ -74,7 +74,7 @@ final class NarseseFactoryImpl implements NarseseFactory
     checkNotEmpty(name, "name");
     checkArgument(NarseseChars.isWordValid(name), () -> "Invalide name: " + name);
 
-    return new OperationBuilderImpl(bufferSize, prefixThreshold, name);
+    return new OperationBuilderImpl(narsese, name);
   }
 
   @Override
@@ -84,7 +84,15 @@ final class NarseseFactoryImpl implements NarseseFactory
     checkNotNull(copula, "copula");
     checkNotNull(predicate, "predicate");
 
-    return new CopulaTermImpl(bufferSize, prefixThreshold, subject, copula, predicate, Tense.NONE);
+    if (copula.isSymmetric())
+    {
+      return new SymmetricCopulaTerm(narsese, subject, copula.isFirstOrder(), predicate,
+          Tense.NONE);
+    } else
+    {
+      return new AsymmetricCopulaTerm(narsese, subject, copula.isFirstOrder(), predicate,
+          Tense.NONE);
+    }
   }
 
   @Override
@@ -97,31 +105,26 @@ final class NarseseFactoryImpl implements NarseseFactory
     switch (copula)
     {
       case INSTANCE:
-        return new CopulaTermImpl(bufferSize, prefixThreshold,
-            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), Copula.INHERITANCE,
-            predicate, Tense.NONE);
+        return new AsymmetricCopulaTerm(narsese,
+            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), true, predicate,
+            Tense.NONE);
       case INSTANCE_PROPERTY:
-        return new CopulaTermImpl(bufferSize, prefixThreshold,
-            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), Copula.INHERITANCE,
+        return new AsymmetricCopulaTerm(narsese,
+            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), true,
             compoundTerm(Connector.INTENSIONAL_SET).of(predicate).build(), Tense.NONE);
       case PROPERTY:
-        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.INHERITANCE,
+        return new AsymmetricCopulaTerm(narsese, subject, true,
             compoundTerm(Connector.INTENSIONAL_SET).of(predicate).build(), Tense.NONE);
       case CONCURRENT_EQUIVALENCE:
-        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.EQUIVALENCE,
-            predicate, Tense.PRESENT);
+        return new SymmetricCopulaTerm(narsese, subject, false, predicate, Tense.PRESENT);
       case CONCURRENT_IMPLICATION:
-        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.IMPLICATION,
-            predicate, Tense.PRESENT);
+        return new AsymmetricCopulaTerm(narsese, subject, false, predicate, Tense.PRESENT);
       case PREDICTIVE_EQUIVALENCE:
-        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.EQUIVALENCE,
-            predicate, Tense.FUTURE);
+        return new SymmetricCopulaTerm(narsese, subject, false, predicate, Tense.FUTURE);
       case PREDICTIVE_IMPLICATION:
-        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.IMPLICATION,
-            predicate, Tense.FUTURE);
+        return new AsymmetricCopulaTerm(narsese, subject, false, predicate, Tense.FUTURE);
       case RETROSPECTIVE_IMPLICATION:
-        return new CopulaTermImpl(bufferSize, prefixThreshold, subject, Copula.IMPLICATION,
-            predicate, Tense.PAST);
+        return new AsymmetricCopulaTerm(narsese, subject, false, predicate, Tense.PAST);
       default:
         throw new IllegalArgumentException("Unknow copula.");
     }
@@ -132,7 +135,7 @@ final class NarseseFactoryImpl implements NarseseFactory
   {
     checkNotNull(connector, "connector");
 
-    return new CompoundTermBuilderImpl(bufferSize, prefixThreshold, connector);
+    return new CompoundTermBuilderImpl(narsese, connector);
   }
 
   @Override
@@ -142,7 +145,7 @@ final class NarseseFactoryImpl implements NarseseFactory
     checkNotEmpty(name, "name");
     checkArgument(NarseseChars.isWordValid(name), () -> "Invalide name: " + name);
 
-    return new ConstantImpl(bufferSize, name);
+    return new ConstantImpl(narsese, name);
   }
 
   @Override
@@ -152,13 +155,13 @@ final class NarseseFactoryImpl implements NarseseFactory
     checkNotEmpty(name, "name");
     checkArgument(NarseseChars.isWordValid(name), () -> "Invalide name: " + name);
 
-    return new IndependentVariableImpl(bufferSize, name);
+    return new IndependentVariableImpl(narsese, name);
   }
 
   @Override
   public DependentVariable dependentVariable()
   {
-    return new DependentVariableImpl(bufferSize);
+    return new DependentVariableImpl(narsese, "", new ArrayList<>());
   }
 
   @Override
@@ -166,13 +169,13 @@ final class NarseseFactoryImpl implements NarseseFactory
   {
     checkArgument(NarseseChars.isWordValid(name), () -> "Invalide name: " + name);
 
-    return new DependentVariableBuilderImpl(bufferSize, name);
+    return new DependentVariableBuilderImpl(narsese, name);
   }
 
   @Override
   public QueryVariable queryVariable()
   {
-    return new QueryVariableImpl(bufferSize);
+    return new QueryVariableImpl(narsese, "");
   }
 
   @Override
@@ -180,6 +183,6 @@ final class NarseseFactoryImpl implements NarseseFactory
   {
     checkArgument(NarseseChars.isWordValid(name), () -> "Invalide name: " + name);
 
-    return new QueryVariableImpl(bufferSize, name);
+    return new QueryVariableImpl(narsese, name);
   }
 }

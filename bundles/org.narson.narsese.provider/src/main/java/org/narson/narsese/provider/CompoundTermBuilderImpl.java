@@ -11,20 +11,19 @@ import java.util.List;
 import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.CompoundTermBuilder;
 import org.narson.api.narsese.Connector;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Term;
 
 final class CompoundTermBuilderImpl implements CompoundTermBuilder
 {
-  private final int bufferSize;
-  private final int prefixThreshold;
+  private final Narsese narsese;
   private final Connector connector;
   private final List<Term> terms = new ArrayList<>();
   private int placeHolderPosition = -1;
 
-  public CompoundTermBuilderImpl(int bufferSize, int prefixThreshold, Connector connector)
+  public CompoundTermBuilderImpl(Narsese narsese, Connector connector)
   {
-    this.bufferSize = bufferSize;
-    this.prefixThreshold = prefixThreshold;
+    this.narsese = narsese;
     this.connector = connector;
   }
 
@@ -116,7 +115,7 @@ final class CompoundTermBuilderImpl implements CompoundTermBuilder
       Collections.sort(effectiveTerms);
     }
 
-    return new CompoundTermImpl(bufferSize, prefixThreshold, connector,
-        Collections.unmodifiableList(effectiveTerms), placeHolder);
+    return new CompoundTermImpl(narsese, connector, Collections.unmodifiableList(effectiveTerms),
+        placeHolder);
   }
 }

@@ -22,15 +22,24 @@ public interface JudgmentBuilder
   /**
    * Set a truth value for the judgment being built.
    * <p>
-   * The frequency must be a double in [0.0,1.0] and the confidence must be a double in ]0.0,1.0[.
+   * The frequency must be a double in [0.0,1.0] and the confidence must be a double in (0.0,1.0).
    *
-   * @param frequency the frequency of the desire value
-   * @param confidence the confidence of the desire value
+   * @param frequency the frequency of the truth value
+   * @param confidence the confidence of the truth value
    * @return this builder
    * @throws IllegalArgumentException if the frequency is not in [0.0,1.0] of the confidence is not
-   *         in ]0.0,1.0[
+   *         in (0.0,1.0)
    */
   JudgmentBuilder truthValue(double frequency, double confidence) throws IllegalArgumentException;
+
+  /**
+   * Set the given truth value for the judgment being built.
+   *
+   * @param truthValue the truth value
+   * @return this builder
+   * @throws IllegalArgumentException if truthValue is null
+   */
+  JudgmentBuilder truthValue(TruthValue truthValue) throws NullPointerException;
 
   /**
    * Returns a new {@link Judgment} object conform to the state of this object builder.

@@ -1,6 +1,5 @@
 package org.narson.narsese.provider;
 
-import static org.narson.tools.PredChecker.checkArgument;
 import org.narson.api.narsese.EvidenceAmount;
 import org.narson.api.narsese.FrequencyInterval;
 import org.narson.api.narsese.TruthValue;
@@ -29,27 +28,22 @@ final class EvidenceAmountImpl implements EvidenceAmount
   }
 
   @Override
-  public double getExpectation(double evidentialHorizon) throws IllegalArgumentException
+  public double getExpectation(double evidentialHorizon)
   {
-    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
-
     return (positiveAmountOfEvidence + evidentialHorizon / 2.0)
         / (amountOfEvidence + evidentialHorizon);
   }
 
   @Override
-  public TruthValue toTruthValue(double evidentialHorizon) throws IllegalArgumentException
+  public TruthValue toTruthValue(double evidentialHorizon)
   {
-    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
     return new TruthValueImpl(positiveAmountOfEvidence / amountOfEvidence,
         amountOfEvidence / (amountOfEvidence + evidentialHorizon));
   }
 
   @Override
   public FrequencyInterval toFrequencyInterval(double evidentialHorizon)
-      throws IllegalArgumentException
   {
-    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
     return new FrequencyIntervalImpl(
         positiveAmountOfEvidence / (amountOfEvidence + evidentialHorizon),
         (positiveAmountOfEvidence + evidentialHorizon) / (amountOfEvidence + evidentialHorizon));

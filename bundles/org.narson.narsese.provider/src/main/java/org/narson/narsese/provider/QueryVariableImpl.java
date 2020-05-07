@@ -1,5 +1,6 @@
 package org.narson.narsese.provider;
 
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.QueryVariable;
 import org.narson.api.narsese.Term;
 
@@ -8,16 +9,11 @@ final class QueryVariableImpl extends AbstractTerm implements QueryVariable
   private final String name;
   private final boolean anonymous;
 
-  public QueryVariableImpl(int bufferSize, String name)
+  public QueryVariableImpl(Narsese narsese, String name)
   {
-    super(ValueType.QUERY_VARIABLE, bufferSize, 0);
+    super(narsese, ValueType.QUERY_VARIABLE);
     this.name = name != null ? name : "";
     anonymous = this.name.isEmpty();
-  }
-
-  public QueryVariableImpl(int bufferSize)
-  {
-    this(bufferSize, null);
   }
 
   @Override

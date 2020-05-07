@@ -1,21 +1,24 @@
 package org.narson.narsese.provider;
 
+import java.util.List;
 import org.narson.api.narsese.Copula;
 import org.narson.api.narsese.CopulaTerm;
+import org.narson.api.narsese.Inference;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Tense;
 import org.narson.api.narsese.Term;
 
-final class CopulaTermImpl extends AbstractTerm implements CopulaTerm
+abstract class AbstractCopulaTerm extends AbstractTerm implements CopulaTerm
 {
   private final Term subject;
   private final Copula copula;
   private final Term predicate;
   private final Tense tense;
 
-  public CopulaTermImpl(int bufferSize, int prefixThreshold, Term subject, Copula copula,
-      Term predicate, Tense tense)
+  public AbstractCopulaTerm(Narsese narsese, Term subject, Copula copula, Term predicate,
+      Tense tense)
   {
-    super(ValueType.COPULA_TERM, bufferSize, prefixThreshold);
+    super(narsese, ValueType.COPULA_TERM);
     this.subject = subject;
     this.copula = copula;
     this.predicate = predicate;
@@ -23,37 +26,37 @@ final class CopulaTermImpl extends AbstractTerm implements CopulaTerm
   }
 
   @Override
-  public Term getSubject()
+  final public Term getSubject()
   {
     return subject;
   }
 
   @Override
-  public Copula getCopula()
+  final public Copula getCopula()
   {
     return copula;
   }
 
   @Override
-  public Term getPredicate()
+  final public Term getPredicate()
   {
     return predicate;
   }
 
   @Override
-  public Tense getTense()
+  final public Tense getTense()
   {
     return tense;
   }
 
   @Override
-  protected int computeSyntacticComplexity()
+  final protected int computeSyntacticComplexity()
   {
     return subject.getSyntacticComplexity() + predicate.getSyntacticComplexity() + 1;
   }
 
   @Override
-  public int hashCode()
+  final public int hashCode()
   {
     final int prime = 31;
     int result = super.hashCode();
@@ -65,7 +68,7 @@ final class CopulaTermImpl extends AbstractTerm implements CopulaTerm
   }
 
   @Override
-  public boolean equals(Object obj)
+  final public boolean equals(Object obj)
   {
     if (!super.equals(obj))
     {
@@ -103,7 +106,7 @@ final class CopulaTermImpl extends AbstractTerm implements CopulaTerm
   }
 
   @Override
-  public int compareTo(Term o)
+  final public int compareTo(Term o)
   {
     final int compareType = getValueType().compareTo(o.getValueType());
     if (compareType < 0)
@@ -156,4 +159,24 @@ final class CopulaTermImpl extends AbstractTerm implements CopulaTerm
       }
     }
   }
+
+  @Override
+  public void computeInferences(TruthValueImpl truthValue, Term otherTerm,
+      TruthValueImpl otherTruthValue, double evidentialHorizon, List<Inference> inferences)
+  {
+    super.computeInferences(truthValue, otherTerm, otherTruthValue, evidentialHorizon, inferences);
+
+    if (otherTerm.getValueType() == ValueType.COPULA_TERM)
+    {
+      final CopulaTerm otherCopulaTerm = otherTerm.asCopulaTerm();
+      if (!(copula.isFirstOrder() ^ otherCopulaTerm.getCopula().isFirstOrder()))
+      {
+        computeInferences(truthValue, otherCopulaTerm, otherTruthValue, evidentialHorizon,
+            inferences);
+      }
+    }
+  }
+
+  abstract public void computeInferences(TruthValueImpl truthValue, CopulaTerm otherTerm,
+      TruthValueImpl otherTruthValue, double evidentialHorizon, List<Inference> inferences);
 }

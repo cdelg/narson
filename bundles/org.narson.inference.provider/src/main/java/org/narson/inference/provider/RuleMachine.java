@@ -8,8 +8,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.narson.api.inference.BasicInferenciable;
-import org.narson.api.inference.Inference;
-import org.narson.api.inference.Inference.Type;
+import org.narson.api.inference.InferenceBB;
+import org.narson.api.inference.InferenceBB.Type;
 import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.Constant;
 import org.narson.api.narsese.CopulaTerm;
@@ -31,9 +31,9 @@ class RuleMachine
     nf = narsese.getNarseseFactory();
   }
 
-  public List<Inference> computeInferences(RuleContext context)
+  public List<InferenceBB> computeInferences(RuleContext context)
   {
-    final List<Inference> result = new ArrayList<>();
+    final List<InferenceBB> result = new ArrayList<>();
     for (final ConditionalRule rule : rules)
     {
       if (context.match(rule.pattern1, rule.pattern2))
@@ -48,13 +48,13 @@ class RuleMachine
     return result;
   }
 
-  public void addRule(String judgment, String judgmentResult, Inference.Type type, boolean inv)
+  public void addRule(String judgment, String judgmentResult, InferenceBB.Type type, boolean inv)
   {
     addRule(judgment, null, judgmentResult, type, inv);
   }
 
   public void addRule(String judgment1, String judgment2, String judgmentResult,
-      Inference.Type type, boolean inv)
+      InferenceBB.Type type, boolean inv)
   {
     final Term pattern1 = readJudgment(judgment1).getStatement();
     final Term pattern2 = judgment2 != null ? readJudgment(judgment2).getStatement() : null;
@@ -214,13 +214,13 @@ class RuleMachine
 
   private class ConditionalRule
   {
-    public Inference.Type type;
+    public InferenceBB.Type type;
     public final Term pattern1;
     public final Term pattern2;
     public Consumer<RuleContext> truthFunction;
     public Function<RuleContext, Term> statementFunction;
 
-    public ConditionalRule(Inference.Type type, Term pattern1, Term pattern2,
+    public ConditionalRule(InferenceBB.Type type, Term pattern1, Term pattern2,
         Consumer<RuleContext> truthFunction, Function<RuleContext, Term> statementFunction)
     {
       this.type = type;

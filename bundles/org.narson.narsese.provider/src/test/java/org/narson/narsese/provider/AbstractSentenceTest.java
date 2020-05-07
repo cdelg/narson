@@ -5,34 +5,25 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
-import org.narson.api.narsese.NarseseValue.ValueType;
-import org.narson.api.narsese.Tense;
-import org.narson.api.narsese.Term;
+import org.narson.api.narsese.NarseseFactory;
+import org.narson.api.narsese.Sentence;
 
 public class AbstractSentenceTest
 {
-  class Sentence extends AbstractSentence
-  {
-    public Sentence(ValueType valueType, int bufferSize, int prefixThreshold, Term statement)
-    {
-      super(valueType, bufferSize, prefixThreshold, statement);
-    }
-  }
+  private final NarseseFactory nf = new NarseseProvider().getNarseseFactory();
 
-  private final Sentence judgment1 =
-      new Sentence(ValueType.JUDGMENT, 100, 1, new ConstantImpl(1, "one"));
-  private final Sentence judgment2 =
-      new Sentence(ValueType.JUDGMENT, 100, 1, new ConstantImpl(1, "one"));
-  private final Sentence goal1 = new Sentence(ValueType.GOAL, 100, 1, new ConstantImpl(1, "one"));
-  private final Sentence goal2 = new Sentence(ValueType.GOAL, 100, 1, new ConstantImpl(1, "two"));
+  private final Sentence judgment1 = nf.judgment(nf.constant("one")).build();
+  private final Sentence judgment2 = nf.judgment(nf.constant("one")).build();
+  private final Sentence goal1 = nf.goal(nf.constant("one")).build();
+  private final Sentence goal2 = nf.goal(nf.constant("two")).build();
 
   @Test
   public void testTermIsRight()
   {
-    assertThat(judgment1.getStatement(), equalTo(new ConstantImpl(1, "one")));
-    assertThat(judgment2.getStatement(), equalTo(new ConstantImpl(1, "one")));
-    assertThat(goal1.getStatement(), equalTo(new ConstantImpl(1, "one")));
-    assertThat(goal2.getStatement(), equalTo(new ConstantImpl(1, "two")));
+    assertThat(judgment1.getStatement(), equalTo(nf.constant("one")));
+    assertThat(judgment2.getStatement(), equalTo(nf.constant("one")));
+    assertThat(goal1.getStatement(), equalTo(nf.constant("one")));
+    assertThat(goal2.getStatement(), equalTo(nf.constant("two")));
   }
 
   @Test
@@ -48,7 +39,7 @@ public class AbstractSentenceTest
   @Test
   public void testToStringJustWorks()
   {
-    assertThat(new JudgmentImpl(100, 2, new ConstantImpl(1, "one"), new TruthValueImpl(0.5, 0.5),
-        Tense.NONE), hasToString("one. %0.5;0.5%"));
+    assertThat(nf.judgment(nf.constant("one")).truthValue(0.5, 0.5).build(),
+        hasToString("one. %0.5;0.5%"));
   }
 }

@@ -1,7 +1,5 @@
 package org.narson.narsese.provider;
 
-import static org.narson.tools.PredChecker.checkArgument;
-import java.util.concurrent.atomic.AtomicReference;
 import org.narson.api.narsese.EvidenceAmount;
 import org.narson.api.narsese.FrequencyInterval;
 import org.narson.api.narsese.TruthValue;
@@ -11,22 +9,20 @@ final class FrequencyIntervalImpl implements FrequencyInterval
   private final double lower;
   private final double upper;
   private final double ignorance;
-  private final AtomicReference<TruthValue> cachedTruthValue = new AtomicReference<>();
-  private final AtomicReference<Double> cachedExpectation = new AtomicReference<>();
+  private volatile TruthValue cachedTruthValue;
+  private volatile Double cachedExpectation;
 
   public FrequencyIntervalImpl(double lower, double upper, TruthValue truthValue)
   {
     this.lower = lower;
     this.upper = upper;
     ignorance = upper - lower;
-    cachedTruthValue.set(truthValue);
+    cachedTruthValue = truthValue;
   }
 
   public FrequencyIntervalImpl(double lower, double upper)
   {
-    this.lower = lower;
-    this.upper = upper;
-    ignorance = upper - lower;
+    this(lower, upper, null);
   }
 
   @Override
@@ -50,37 +46,20 @@ final class FrequencyIntervalImpl implements FrequencyInterval
   @Override
   public double getExpectation()
   {
-    Double result = cachedExpectation.get();
-    if (result == null)
-    {
-      result = (lower + upper) / 2.0;
-      if (!cachedExpectation.compareAndSet(null, result))
-      {
-        return cachedExpectation.get();
-      }
-    }
-    return result;
+    return cachedExpectation != null ? cachedExpectation
+        : (cachedExpectation = (lower + upper) / 2.0);
   }
 
   @Override
   public TruthValue toTruthValue()
   {
-    TruthValue result = cachedTruthValue.get();
-    if (result == null)
-    {
-      result = new TruthValueImpl(lower / (1 - ignorance), 1 - ignorance, this);
-      if (!cachedTruthValue.compareAndSet(null, result))
-      {
-        return cachedTruthValue.get();
-      }
-    }
-    return result;
+    return cachedTruthValue != null ? cachedTruthValue
+        : (cachedTruthValue = new TruthValueImpl(lower / (1 - ignorance), 1 - ignorance, this));
   }
 
   @Override
-  public EvidenceAmount toEvidenceAmount(double evidentialHorizon) throws IllegalArgumentException
+  public EvidenceAmount toEvidenceAmount(double evidentialHorizon)
   {
-    checkArgument(evidentialHorizon > 0, "evidentialHorizon <= 0");
     return new EvidenceAmountImpl(evidentialHorizon * lower / ignorance,
         evidentialHorizon * (1 - ignorance) / ignorance);
   }

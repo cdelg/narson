@@ -12,7 +12,7 @@ public class AbstractNarseseValueTest
   {
     public NarseseValue(ValueType valueType)
     {
-      super(valueType);
+      super(new NarseseProvider(), valueType);
     }
   }
 

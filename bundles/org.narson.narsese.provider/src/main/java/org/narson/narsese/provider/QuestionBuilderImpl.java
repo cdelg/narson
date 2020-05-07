@@ -1,6 +1,7 @@
 package org.narson.narsese.provider;
 
 import static org.narson.tools.PredChecker.checkNotNull;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Question;
 import org.narson.api.narsese.QuestionBuilder;
 import org.narson.api.narsese.Tense;
@@ -8,15 +9,13 @@ import org.narson.api.narsese.Term;
 
 final class QuestionBuilderImpl implements QuestionBuilder
 {
-  private final int bufferSize;
-  private final int prefixThreshold;
+  private final Narsese narsese;
   private final Term statement;
   private Tense tense = Tense.NONE;
 
-  public QuestionBuilderImpl(int bufferSize, int prefixThreshold, Term statement)
+  public QuestionBuilderImpl(Narsese narsese, Term statement)
   {
-    this.bufferSize = bufferSize;
-    this.prefixThreshold = prefixThreshold;
+    this.narsese = narsese;
     this.statement = statement;
   }
 
@@ -30,6 +29,6 @@ final class QuestionBuilderImpl implements QuestionBuilder
   @Override
   public Question build()
   {
-    return new QuestionImpl(bufferSize, prefixThreshold, statement, tense);
+    return new QuestionImpl(narsese, statement, tense);
   }
 }

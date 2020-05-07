@@ -1,6 +1,7 @@
 package org.narson.narsese.provider;
 
 import java.util.List;
+import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Operation;
 import org.narson.api.narsese.Term;
 
@@ -9,10 +10,9 @@ final class OperationImpl extends AbstractTerm implements Operation
   private final String name;
   private final List<Term> unmodifiableTerms;
 
-  public OperationImpl(int bufferSize, int prefixThreshold, String name,
-      List<Term> unmodifiableTerms)
+  public OperationImpl(Narsese narsese, String name, List<Term> unmodifiableTerms)
   {
-    super(ValueType.OPERATION, bufferSize, prefixThreshold);
+    super(narsese, ValueType.OPERATION);
     this.name = name;
     this.unmodifiableTerms = unmodifiableTerms;
   }
