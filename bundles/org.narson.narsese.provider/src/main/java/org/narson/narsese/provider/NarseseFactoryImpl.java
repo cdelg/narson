@@ -86,12 +86,22 @@ final class NarseseFactoryImpl implements NarseseFactory
 
     if (copula.isSymmetric())
     {
-      return new SymmetricCopulaTerm(narsese, subject, copula.isFirstOrder(), predicate,
-          Tense.NONE);
+      if (copula.isFirstOrder())
+      {
+        return new SimilarityCopulaTerm(narsese, subject, predicate, Tense.NONE);
+      } else
+      {
+        return new EquivalenceCopulaTerm(narsese, subject, predicate, Tense.NONE);
+      }
     } else
     {
-      return new AsymmetricCopulaTerm(narsese, subject, copula.isFirstOrder(), predicate,
-          Tense.NONE);
+      if (copula.isFirstOrder())
+      {
+        return new InheritanceCopulaTerm(narsese, subject, predicate, Tense.NONE);
+      } else
+      {
+        return new ImplicationCopulaTerm(narsese, subject, predicate, Tense.NONE);
+      }
     }
   }
 
@@ -105,26 +115,25 @@ final class NarseseFactoryImpl implements NarseseFactory
     switch (copula)
     {
       case INSTANCE:
-        return new AsymmetricCopulaTerm(narsese,
-            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), true, predicate,
-            Tense.NONE);
+        return new InheritanceCopulaTerm(narsese,
+            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), predicate, Tense.NONE);
       case INSTANCE_PROPERTY:
-        return new AsymmetricCopulaTerm(narsese,
-            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(), true,
+        return new InheritanceCopulaTerm(narsese,
+            compoundTerm(Connector.EXTENSIONAL_SET).of(subject).build(),
             compoundTerm(Connector.INTENSIONAL_SET).of(predicate).build(), Tense.NONE);
       case PROPERTY:
-        return new AsymmetricCopulaTerm(narsese, subject, true,
+        return new InheritanceCopulaTerm(narsese, subject,
             compoundTerm(Connector.INTENSIONAL_SET).of(predicate).build(), Tense.NONE);
       case CONCURRENT_EQUIVALENCE:
-        return new SymmetricCopulaTerm(narsese, subject, false, predicate, Tense.PRESENT);
+        return new EquivalenceCopulaTerm(narsese, subject, predicate, Tense.PRESENT);
       case CONCURRENT_IMPLICATION:
-        return new AsymmetricCopulaTerm(narsese, subject, false, predicate, Tense.PRESENT);
+        return new ImplicationCopulaTerm(narsese, subject, predicate, Tense.PRESENT);
       case PREDICTIVE_EQUIVALENCE:
-        return new SymmetricCopulaTerm(narsese, subject, false, predicate, Tense.FUTURE);
+        return new EquivalenceCopulaTerm(narsese, subject, predicate, Tense.FUTURE);
       case PREDICTIVE_IMPLICATION:
-        return new AsymmetricCopulaTerm(narsese, subject, false, predicate, Tense.FUTURE);
+        return new ImplicationCopulaTerm(narsese, subject, predicate, Tense.FUTURE);
       case RETROSPECTIVE_IMPLICATION:
-        return new AsymmetricCopulaTerm(narsese, subject, false, predicate, Tense.PAST);
+        return new ImplicationCopulaTerm(narsese, subject, predicate, Tense.PAST);
       default:
         throw new IllegalArgumentException("Unknow copula.");
     }

@@ -113,12 +113,26 @@ final class JudgmentImpl extends AbstractSentence implements Judgment
           final CopulaTerm c = t.asCopulaTerm();
           if (c.getCopula().isSymmetric())
           {
-            return new SymmetricCopulaTerm(narsese, c.getSubject(), c.getCopula().isFirstOrder(),
-                c.getPredicate(), c.getTense());
+            if (c.getCopula().isFirstOrder())
+            {
+              return new SimilarityCopulaTerm(narsese, c.getSubject(), c.getPredicate(),
+                  c.getTense());
+            } else
+            {
+              return new EquivalenceCopulaTerm(narsese, c.getSubject(), c.getPredicate(),
+                  c.getTense());
+            }
           } else
           {
-            return new AsymmetricCopulaTerm(narsese, c.getSubject(), c.getCopula().isFirstOrder(),
-                c.getPredicate(), c.getTense());
+            if (c.getCopula().isFirstOrder())
+            {
+              return new InheritanceCopulaTerm(narsese, c.getSubject(), c.getPredicate(),
+                  c.getTense());
+            } else
+            {
+              return new ImplicationCopulaTerm(narsese, c.getSubject(), c.getPredicate(),
+                  c.getTense());
+            }
           }
         case DEPENDENT_VARIABLE:
           final DependentVariable d = t.asDependentVariable();
