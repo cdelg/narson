@@ -1,6 +1,7 @@
 package org.narson.narsese.provider;
 
 import java.util.List;
+import org.narson.api.narsese.Connector;
 import org.narson.api.narsese.Copula;
 import org.narson.api.narsese.Inference;
 import org.narson.api.narsese.Narsese;
@@ -12,6 +13,26 @@ final class EquivalenceCopulaTerm extends AbstractSymmetricCopulaTerm
   public EquivalenceCopulaTerm(Narsese narsese, Term subject, Term predicate, Tense tense)
   {
     super(narsese, subject, Copula.EQUIVALENCE, predicate, tense);
+  }
+
+  @Override
+  public void computeInferences(TruthValueImpl truthValue, double evidentialHorizon,
+      List<Inference> inferences)
+  {
+    super.computeInferences(truthValue, evidentialHorizon, inferences);
+    computeStructuralInferences(truthValue, inferences);
+  }
+
+  public void computeStructuralInferences(TruthValueImpl truthValue, List<Inference> inferences)
+  {
+    /* Structural equivalence rule (S<=>P) <===> (S==>P) & (P==>S) */
+    inferences.add(new DefaultInference(Inference.Type.STRUCTURAL_EQUIVALENCE, nf
+        .judgment(nf.compoundTerm(Connector.CONJUNCTION)
+            .of(nf.copulaTerm(getSubject(), Copula.IMPLICATION, getPredicate()),
+                nf.copulaTerm(getPredicate(), Copula.IMPLICATION, getSubject()))
+            .build())
+        .truthValue(truthValue).build()));
+
   }
 
   @Override

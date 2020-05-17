@@ -1,6 +1,7 @@
 package org.narson.narsese.provider;
 
 import java.util.List;
+import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.Connector;
 import org.narson.api.narsese.Copula;
 import org.narson.api.narsese.CopulaTerm;
@@ -14,6 +15,49 @@ final class InheritanceCopulaTerm extends AbstractAsymmetricCopulaTerm
   public InheritanceCopulaTerm(Narsese narsese, Term subject, Term predicate, Tense tense)
   {
     super(narsese, subject, Copula.INHERITANCE, predicate, tense);
+  }
+
+  @Override
+  public void computeInferences(TruthValueImpl truthValue, double evidentialHorizon,
+      List<Inference> inferences)
+  {
+    super.computeInferences(truthValue, evidentialHorizon, inferences);
+    computeStructuralInferences(truthValue, inferences);
+  }
+
+  public void computeStructuralInferences(TruthValueImpl truthValue, List<Inference> inferences)
+  {
+    if (getPredicate().getValueType() == ValueType.COMPOUND_TERM)
+    {
+      final CompoundTerm term = getPredicate().asCompoundTerm();
+      if (term.getConnector() == Connector.EXTENSIONAL_SET && term.getTerms().size() == 1)
+      {
+        if (!getSubject().equals(getPredicate()))
+        {
+          /* Structural equivalence rule S-->{P} <===> S<->{P} */
+          inferences.add(new DefaultInference(Inference.Type.STRUCTURAL_EQUIVALENCE,
+              nf.judgment(nf.copulaTerm(getSubject(), Copula.SIMILARITY, getPredicate()))
+                  .truthValue(truthValue).build()));
+        }
+      }
+    }
+
+    if (getSubject().getValueType() == ValueType.COMPOUND_TERM)
+    {
+      final CompoundTerm term = getPredicate().asCompoundTerm();
+      if (term.getConnector() == Connector.INTENSIONAL_SET && term.getTerms().size() == 1)
+      {
+        if (!getSubject().equals(getPredicate()))
+        {
+          /* Structural equivalence rule [S]-->P <===> [S]<->P */
+          inferences.add(new DefaultInference(Inference.Type.STRUCTURAL_EQUIVALENCE,
+              nf.judgment(nf.copulaTerm(getSubject(), Copula.SIMILARITY, getPredicate()))
+                  .truthValue(truthValue).build()));
+        }
+      }
+    }
+
+
   }
 
   @Override
