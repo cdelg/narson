@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.narson.api.inference.BasicInferenciable;
 import org.narson.api.narsese.Copula;
 import org.narson.api.narsese.NarseseFactory;
-import org.narson.narsese.provider.NarseseProvider;
+import org.narson.narsese.NarseseProvider;
 
 public class InferenceEngineTest
 {

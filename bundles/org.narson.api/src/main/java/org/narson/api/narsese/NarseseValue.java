@@ -8,10 +8,10 @@ import org.osgi.annotation.versioning.ProviderType;
  *
  * <p>
  * A Narsese value is one of the following: a {@link Judgment} sentence, a {@link Goal} sentence, a
- * {@link Question} sentence, a {@link Query} sentence, an {@link Operation} term, a
- * {@link Relation} term, a {@link CompoundTerm} term, a {@link Constant} term, a {@link Constant}
- * term, an {@link IndependentVariable} term, a {@link DependentVariable} term or a
- * {@link QueryVariable} term.
+ * {@link Question} sentence, a {@link Query} sentence, an {@link OperationTerm} term, a
+ * {@link Relation} term, a {@link CompoundTerm} term, a {@link ConstantTerm} term, a
+ * {@link ConstantTerm} term, an {@link IndependentVariable} term, a {@link DependentVariable} term
+ * or a {@link QueryVariable} term.
  *
  */
 @ProviderType
@@ -23,13 +23,16 @@ public interface NarseseValue
    */
   public enum ValueType
   {
-    CONSTANT,
+    CONSTANT_TERM,
+    NEGATION_TERM,
     INDEPENDENT_VARIABLE,
     QUERY_VARIABLE,
     DEPENDENT_VARIABLE,
     COPULA_TERM,
     COMPOUND_TERM,
-    OPERATION,
+    SET_TERM,
+    IMAGE_TERM,
+    OPERATION_TERM,
     QUERY,
     QUESTION,
     GOAL,

@@ -4,7 +4,7 @@ import java.util.Collection;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * A builder for creating {@link Operation} object. This builder can be obtained from a
+ * A builder for creating {@link OperationTerm} object. This builder can be obtained from a
  * {@link NarseseFactory}.
  *
  */
@@ -39,9 +39,9 @@ public interface OperationBuilder
   OperationBuilder on(Collection<Term> terms) throws NullPointerException;
 
   /**
-   * Returns a new {@link Operation} object conform to the state of this object builder.
+   * Returns a new {@link OperationTerm} object conform to the state of this object builder.
    *
-   * @return a new {@link Operation} object conform to the state of this object builder
+   * @return a new {@link OperationTerm} object conform to the state of this object builder
    */
-  Operation build();
+  OperationTerm build();
 }

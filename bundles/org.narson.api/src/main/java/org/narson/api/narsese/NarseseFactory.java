@@ -49,7 +49,7 @@ public interface NarseseFactory
 
   /**
    * Create a new {@link OperationBuilder} which can then be used to complete the creation of an
-   * {@link Operation}. The name of the operation must be a non empty word in the Narsese language,
+   * {@link OperationTerm}. The name of the operation must be a non empty word in the Narsese language,
    * that is, it can contain any unicode letter, digits and the underscore character and must not
    * start with a digit or be the single underscore character.
    *
@@ -69,7 +69,7 @@ public interface NarseseFactory
    * @return a new {@link CopulaTerm}
    * @throws NullPointerException if any of the parameters is null
    */
-  CopulaTerm copulaTerm(Term subject, Copula copula, Term predicate) throws NullPointerException;
+  CopulaTerm copula(Term subject, Copula copula, Term predicate) throws NullPointerException;
 
   /**
    * Create a new {@link CopulaTerm} with the given subject and predicate.
@@ -82,7 +82,7 @@ public interface NarseseFactory
    * @return a new {@link CopulaTerm}
    * @throws NullPointerException if any of the parameters is null
    */
-  CopulaTerm copulaTerm(Term subject, SecondaryCopula copula, Term predicate)
+  CopulaTerm copula(Term subject, SecondaryCopula copula, Term predicate)
       throws NullPointerException;
 
   /**
@@ -93,19 +93,41 @@ public interface NarseseFactory
    * @return a new {@link CompoundTermBuilder}
    * @throws NullPointerException
    */
-  CompoundTermBuilder compoundTerm(Connector connector) throws NullPointerException;
+  CompoundTermBuilder compound(CompoundConnector connector) throws NullPointerException;
 
   /**
-   * Create a new {@link Constant}. The name of the constant must be a non empty word in the Narsese
+   * Create a new {@link CompoundTermBuilder} which can then be used to complete the creation of a
+   * {@link CompoundTerm}.
+   *
+   * @param connector the compound term connector
+   * @return a new {@link CompoundTermBuilder}
+   * @throws NullPointerException
+   */
+  SetTermBuilder set(SetConnector connector) throws NullPointerException;
+
+  /**
+   * Create a new {@link CompoundTermBuilder} which can then be used to complete the creation of a
+   * {@link CompoundTerm}.
+   *
+   * @param connector the compound term connector
+   * @return a new {@link CompoundTermBuilder}
+   * @throws NullPointerException
+   */
+  ImageTermBuilder image(ImageConnector connector) throws NullPointerException;
+
+  NegationTerm negation(Term term) throws NullPointerException;
+
+  /**
+   * Create a new {@link ConstantTerm}. The name of the constant must be a non empty word in the Narsese
    * language, that is, it can contain any unicode letter, digits and the underscore character and
    * must not start with a digit or be the single underscore character.
    *
    * @param name the name of the constant
-   * @return a new {@link Constant}
+   * @return a new {@link ConstantTerm}
    * @throws NullPointerException if name is null
    * @throws IllegalArgumentException if name is not a valid word in the Narsese language
    */
-  Constant constant(String name) throws NullPointerException, IllegalArgumentException;
+  ConstantTerm constant(String name) throws NullPointerException, IllegalArgumentException;
 
   /**
    * Create a new {@link IndependentVariable}. The name of the independent variable must be a non

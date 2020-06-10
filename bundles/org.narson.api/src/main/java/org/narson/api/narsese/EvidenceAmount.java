@@ -17,9 +17,9 @@ public interface EvidenceAmount
   double getPositiveAmountOfEvidence();
 
   /**
-   * Returns the amount of evidence.
+   * Returns the total amount of evidence.
    *
-   * @return the amount of evidence
+   * @return the total amount of evidence
    */
   double getAmountOfEvidence();
 

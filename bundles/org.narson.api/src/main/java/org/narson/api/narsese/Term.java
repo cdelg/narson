@@ -7,12 +7,12 @@ import org.osgi.annotation.versioning.ProviderType;
  * Term class represents an immutable Narsese term.
  *
  * <p>
- * A Narsese term is one of the following: a {@link Constant}, an {@link Operation}, a
+ * A Narsese term is one of the following: a {@link ConstantTerm}, an {@link OperationTerm}, a
  * {@link Relation}, a {@link CompoundTerm} term, an {@link IndependentVariable}, a
  * {@link DependentVariable} or a {@link QueryVariable}.
  */
 @ProviderType
-public interface Term extends NarseseValue, Comparable<Term>
+public interface Term extends NarseseValue
 {
   /**
    * Returns the syntactic complexity of this term.
@@ -35,7 +35,7 @@ public interface Term extends NarseseValue, Comparable<Term>
    * @return this term as an operation term
    * @throws IllegalStateException if this term is not an operation
    */
-  Operation asOperation() throws IllegalStateException;
+  OperationTerm asOperationTerm() throws IllegalStateException;
 
   /**
    * Returns this term as a copula term.
@@ -54,12 +54,36 @@ public interface Term extends NarseseValue, Comparable<Term>
   CompoundTerm asCompoundTerm() throws IllegalStateException;
 
   /**
+   * Returns this term as a compound term.
+   *
+   * @return this term as a compound term
+   * @throws IllegalStateException if this term is not a compound term
+   */
+  ImageTerm asImageTerm() throws IllegalStateException;
+
+  /**
+   * Returns this term as a compound term.
+   *
+   * @return this term as a compound term
+   * @throws IllegalStateException if this term is not a compound term
+   */
+  SetTerm asSetTerm() throws IllegalStateException;
+
+  /**
+   * Returns this term as a compound term.
+   *
+   * @return this term as a compound term
+   * @throws IllegalStateException if this term is not a compound term
+   */
+  NegationTerm asNegationTerm() throws IllegalStateException;
+
+  /**
    * Returns this term as a constant term.
    *
    * @return this term as a constant term
    * @throws IllegalStateException if this term is not a constant
    */
-  Constant asConstant() throws IllegalStateException;
+  ConstantTerm asConstantTerm() throws IllegalStateException;
 
   /**
    * Returns this term as an independent variable term.

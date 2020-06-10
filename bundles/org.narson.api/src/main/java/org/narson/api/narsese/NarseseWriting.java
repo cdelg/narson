@@ -11,6 +11,5 @@ public interface NarseseWriting
 
   void to(Writer out) throws NarseseException;
 
-
   String toOutputString() throws NarseseException;
 }

@@ -112,6 +112,8 @@ public interface Narsese
 
   NarseseWriting write(Sentence sentence) throws NullPointerException;
 
+  NarseseWritingBuilder<Sentence> writing();
+
   /**
    * Create a new parser for reading Narsese from the provided i/o stream.
    *
@@ -153,4 +155,6 @@ public interface Narsese
   NarseseReading read(Reader in) throws NullPointerException;
 
   NarseseReading read(String in) throws NullPointerException;
+
+  NarseseReadingBuilder<String> reading();
 }

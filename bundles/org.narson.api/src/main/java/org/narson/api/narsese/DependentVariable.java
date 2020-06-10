@@ -1,6 +1,6 @@
 package org.narson.api.narsese;
 
-import java.util.List;
+import java.util.Set;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -21,11 +21,11 @@ public interface DependentVariable extends Term
   String getName();
 
   /**
-   * Returns the immutable list of the independent variable names upon which this variable depends.
+   * Returns the immutable set of the independent variable names upon which this variable depends.
    *
-   * @return the immutable list of the independent variable names upon which this variable depends
+   * @return the immutable set of the independent variable names upon which this variable depends
    */
-  List<String> getIndependentVariableNames();
+  Set<String> getIndependentVariableNames();
 
   /**
    * Returns true if this variable is anonymous. In this case, the {@link DependentVariable#getName}

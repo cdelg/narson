@@ -2,6 +2,7 @@ package org.narson.inference.provider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import org.narson.api.inference.Inferenciable;
 import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.Constant;
@@ -96,6 +97,7 @@ class RuleContext
         return false;
       }
     }
+    Pattern.ma
   }
 
   private boolean termMatch(Term term, Term pattern)

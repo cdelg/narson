@@ -11,7 +11,7 @@ import org.narson.api.inference.BasicInferenciable;
 import org.narson.api.inference.InferenceBB;
 import org.narson.api.inference.InferenceBB.Type;
 import org.narson.api.narsese.CompoundTerm;
-import org.narson.api.narsese.Constant;
+import org.narson.api.narsese.ConstantTerm;
 import org.narson.api.narsese.CopulaTerm;
 import org.narson.api.narsese.Judgment;
 import org.narson.api.narsese.Narsese;
@@ -100,9 +100,9 @@ class RuleMachine
     return i;
   }
 
-  private List<Constant> getContants(Term pattern)
+  private List<ConstantTerm> getContants(Term pattern)
   {
-    final List<Constant> result = new ArrayList<>();
+    final List<ConstantTerm> result = new ArrayList<>();
     switch (pattern.getValueType())
     {
       case COMPOUND_TERM:
