@@ -1,22 +1,19 @@
 package org.narson.narsese.provider.model;
 
-import java.util.List;
 import org.narson.api.narsese.Copula;
 import org.narson.api.narsese.CopulaTerm;
-import org.narson.api.narsese.Inference;
 import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Tense;
 import org.narson.api.narsese.Term;
 
-abstract class AbstractCopulaTerm extends AbstractTerm implements CopulaTerm
+final class CopulaTermImpl extends AbstractTerm implements CopulaTerm
 {
   private final Term subject;
   private final Copula copula;
   private final Term predicate;
   private final Tense tense;
 
-  public AbstractCopulaTerm(Narsese narsese, Term subject, Copula copula, Term predicate,
-      Tense tense)
+  public CopulaTermImpl(Narsese narsese, Term subject, Copula copula, Term predicate, Tense tense)
   {
     super(narsese, ValueType.COPULA_TERM);
     this.subject = subject;
@@ -104,24 +101,4 @@ abstract class AbstractCopulaTerm extends AbstractTerm implements CopulaTerm
 
     return true;
   }
-
-  @Override
-  public void computeInferences(TruthValueImpl truthValue, Term otherTerm,
-      TruthValueImpl otherTruthValue, double evidentialHorizon, List<Inference> inferences)
-  {
-    super.computeInferences(truthValue, otherTerm, otherTruthValue, evidentialHorizon, inferences);
-
-    if (otherTerm.getValueType() == ValueType.COPULA_TERM)
-    {
-      final CopulaTerm otherCopulaTerm = otherTerm.asCopulaTerm();
-      if (!(copula.isFirstOrder() ^ otherCopulaTerm.getCopula().isFirstOrder()))
-      {
-        computeInferences(truthValue, otherCopulaTerm, otherTruthValue, evidentialHorizon,
-            inferences);
-      }
-    }
-  }
-
-  abstract public void computeInferences(TruthValueImpl truthValue, CopulaTerm otherTerm,
-      TruthValueImpl otherTruthValue, double evidentialHorizon, List<Inference> inferences);
 }

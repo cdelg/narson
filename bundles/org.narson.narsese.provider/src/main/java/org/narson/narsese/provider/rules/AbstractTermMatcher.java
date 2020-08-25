@@ -1,4 +1,4 @@
-package org.narson.narsese.provider.util;
+package org.narson.narsese.provider.rules;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,26 +11,24 @@ import org.narson.api.narsese.NarseseFactory;
 import org.narson.api.narsese.RecursiveCompoundView;
 import org.narson.api.narsese.Term;
 
-final class TermMatcher
+abstract class AbstractTermMatcher
 {
   private final NarseseFactory nf;
-  private final Term toMatch;
   private final Term toInstanciate;
-  private final Term term;
 
-  protected TermMatcher(NarseseFactory nf, Term toMatch, Term toInstanciate, Term term)
+  protected AbstractTermMatcher(NarseseFactory nf, Term toInstanciate)
   {
     this.nf = nf;
-    this.toMatch = toMatch;
     this.toInstanciate = toInstanciate;
-    this.term = term;
   }
 
-  public List<Term> matches()
+  final public List<Term> matches()
   {
-    return match(toMatch, term).stream().map(matched -> instanciate(toInstanciate, matched))
+    return applyMatch().stream().map(matched -> instanciate(toInstanciate, matched))
         .collect(Collectors.toList());
   }
+
+  abstract protected List<Map<String, Term>> applyMatch();
 
   private Term instanciate(Term pattern, Map<String, Term> matched)
   {
@@ -62,7 +60,7 @@ final class TermMatcher
         instanciate(pattern.getPredicate(), matched));
   }
 
-  private List<Map<String, Term>> match(Term pattern, Term term)
+  protected List<Map<String, Term>> match(Term pattern, Term term)
   {
     switch (pattern.getValueType())
     {
@@ -102,7 +100,7 @@ final class TermMatcher
     }
   }
 
-  private List<Map<String, Term>> combine(List<Map<String, Term>> matched1,
+  protected List<Map<String, Term>> combine(List<Map<String, Term>> matched1,
       List<Map<String, Term>> matched2)
   {
     return matched1.stream().flatMap(m1 -> {

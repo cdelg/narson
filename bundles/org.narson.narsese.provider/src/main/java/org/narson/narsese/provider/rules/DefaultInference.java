@@ -1,4 +1,4 @@
-package org.narson.narsese.provider.model;
+package org.narson.narsese.provider.rules;
 
 import org.narson.api.narsese.Inference;
 import org.narson.api.narsese.InferenceType;

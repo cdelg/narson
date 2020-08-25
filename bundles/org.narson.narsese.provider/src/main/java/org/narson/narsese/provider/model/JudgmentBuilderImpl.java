@@ -8,17 +8,21 @@ import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Tense;
 import org.narson.api.narsese.Term;
 import org.narson.api.narsese.TruthValue;
+import org.narson.narsese.provider.rules.RuleMachine;
 
 final class JudgmentBuilderImpl implements JudgmentBuilder
 {
   private final Narsese narsese;
+  private final RuleMachine ruleMachine;
   private final Term statement;
   private Tense tense = Tense.NONE;
   private TruthValue truthValue;
 
-  public JudgmentBuilderImpl(Narsese narsese, Term statement, TruthValue defaultTruthValue)
+  public JudgmentBuilderImpl(Narsese narsese, RuleMachine ruleMachine, Term statement,
+      TruthValue defaultTruthValue)
   {
     this.narsese = narsese;
+    this.ruleMachine = ruleMachine;
     this.statement = statement;
     truthValue = defaultTruthValue;
   }
@@ -54,6 +58,6 @@ final class JudgmentBuilderImpl implements JudgmentBuilder
   @Override
   public Judgment build()
   {
-    return new JudgmentImpl(narsese, statement, truthValue, tense);
+    return new JudgmentImpl(narsese, ruleMachine, statement, truthValue, tense);
   }
 }

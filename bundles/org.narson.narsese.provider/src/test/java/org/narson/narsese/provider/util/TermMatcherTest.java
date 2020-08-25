@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.Sentence;
 import org.narson.narsese.NarseseProvider;
+import org.narson.narsese.provider.rules.TermPattern;
+import org.narson.narsese.provider.rules.TermPatterns;
 
 public class TermMatcherTest
 {

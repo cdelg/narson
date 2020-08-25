@@ -2,41 +2,37 @@ package org.narson.narsese.provider.model;
 
 import static org.narson.tools.PredChecker.checkArgument;
 import static org.narson.tools.PredChecker.checkNotNull;
-import java.util.ArrayList;
 import java.util.List;
-import org.narson.api.narsese.CompoundTerm;
-import org.narson.api.narsese.CopulaTerm;
-import org.narson.api.narsese.DependentVariable;
-import org.narson.api.narsese.ImageTerm;
 import org.narson.api.narsese.Inference;
+import org.narson.api.narsese.InferenceType;
 import org.narson.api.narsese.Judgment;
 import org.narson.api.narsese.Narsese;
-import org.narson.api.narsese.OperationTerm;
 import org.narson.api.narsese.Question;
-import org.narson.api.narsese.SetTerm;
 import org.narson.api.narsese.Tense;
 import org.narson.api.narsese.Term;
 import org.narson.api.narsese.TruthValue;
+import org.narson.narsese.provider.rules.RuleMachine;
 
 final class JudgmentImpl extends AbstractSentence implements Judgment
 {
   private final Tense tense;
+  private final RuleMachine ruleMachine;
+  private final TruthValue truthValue;
   private volatile Question cachedQuestion;
-  private final TruthValueImpl truthValueImpl;
-  private final AbstractTerm termImpl;
 
-  public JudgmentImpl(Narsese narsese, Term statement, TruthValue truthValue, Tense tense)
+  public JudgmentImpl(Narsese narsese, RuleMachine ruleMachine, Term statement,
+      TruthValue truthValue, Tense tense)
   {
     super(narsese, ValueType.JUDGMENT, statement);
+    this.ruleMachine = ruleMachine;
+    this.truthValue = truthValue;
     this.tense = tense;
-    termImpl = wrap(statement);
-    truthValueImpl = wrap(truthValue);
   }
 
   @Override
   final public TruthValue getTruthValue()
   {
-    return truthValueImpl;
+    return truthValue;
   }
 
   @Override
@@ -57,7 +53,7 @@ final class JudgmentImpl extends AbstractSentence implements Judgment
   {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + truthValueImpl.hashCode();
+    result = prime * result + truthValue.hashCode();
     result = prime * result + tense.hashCode();
     return result;
   }
@@ -77,7 +73,7 @@ final class JudgmentImpl extends AbstractSentence implements Judgment
 
     final Judgment other = (Judgment) obj;
 
-    if (!truthValueImpl.equals(other.getTruthValue()))
+    if (!truthValue.equals(other.getTruthValue()))
     {
       return false;
     }
@@ -88,77 +84,6 @@ final class JudgmentImpl extends AbstractSentence implements Judgment
     }
 
     return true;
-  }
-
-  private TruthValueImpl wrap(TruthValue v)
-  {
-    return v instanceof TruthValueImpl ? (TruthValueImpl) v
-        : new TruthValueImpl(v.getFrequency(), v.getConfidence());
-  }
-
-  private AbstractTerm wrap(Term t)
-  {
-    if (t instanceof AbstractTerm)
-    {
-      return (AbstractTerm) t;
-    } else
-    {
-      switch (t.getValueType())
-      {
-        case COMPOUND_TERM:
-          final CompoundTerm cm = t.asCompoundTerm();
-          return new CompoundTermImpl(narsese, cm.getConnector(), cm.getTerms(),
-              cm.getRecursiveViews());
-        case CONSTANT_TERM:
-          return new ConstantTermImpl(narsese, t.asConstantTerm().getName());
-        case COPULA_TERM:
-          final CopulaTerm c = t.asCopulaTerm();
-          if (c.getCopula().isSymmetric())
-          {
-            if (c.getCopula().isFirstOrder())
-            {
-              return new SimilarityCopulaTerm(narsese, c.getSubject(), c.getPredicate(),
-                  c.getTense());
-            } else
-            {
-              return new EquivalenceCopulaTerm(narsese, c.getSubject(), c.getPredicate(),
-                  c.getTense());
-            }
-          } else
-          {
-            if (c.getCopula().isFirstOrder())
-            {
-              return new InheritanceCopulaTerm(narsese, c.getSubject(), c.getPredicate(),
-                  c.getTense());
-            } else
-            {
-              return new ImplicationCopulaTerm(narsese, c.getSubject(), c.getPredicate(),
-                  c.getTense());
-            }
-          }
-        case DEPENDENT_VARIABLE:
-          final DependentVariable d = t.asDependentVariable();
-          return new DependentVariableImpl(narsese, d.getName(), d.getIndependentVariableNames());
-        case INDEPENDENT_VARIABLE:
-          return new IndependentVariableImpl(narsese, t.asIndependentVariable().getName());
-        case OPERATION_TERM:
-          final OperationTerm o = t.asOperationTerm();
-          return new OperationTermImpl(narsese, o.getName(), o.getTerms());
-        case QUERY_VARIABLE:
-          return new QueryVariableImpl(narsese, t.asQueryVariable().getName());
-        case IMAGE_TERM:
-          final ImageTerm im = t.asImageTerm();
-          return new ImageTermImpl(narsese, im.getConnector(), im.getTerms(),
-              im.getPlaceHolderPosition());
-        case NEGATION_TERM:
-          return new NegationTermImpl(narsese, t.asNegationTerm());
-        case SET_TERM:
-          final SetTerm sm = t.asSetTerm();
-          return new SetTermImpl(narsese, sm.getConnector(), sm.getTerms());
-        default:
-          throw new IllegalStateException("BUG: Bad term, should be reported.");
-      }
-    }
   }
 
   @Override
@@ -190,7 +115,7 @@ final class JudgmentImpl extends AbstractSentence implements Judgment
       }
     }
 
-    return new DefaultInference(Inference.Type.CHOICE, result);
+    return new DefaultInference(InferenceType.CHOICE, result);
   }
 
   @Override
@@ -200,18 +125,17 @@ final class JudgmentImpl extends AbstractSentence implements Judgment
     checkArgument(getStatement().equals(otherJudgment.getStatement()),
         "statements are not equals.");
 
-    return new DefaultInference(Inference.Type.REVISION, nf.judgment(getStatement())
-        .truthValue(truthValueImpl.computeRevision(otherJudgment.getTruthValue())).build());
+    return new DefaultInference(InferenceType.REVISION,
+        nf.judgment(getStatement()).truthValue(
+            new BiTruthValueFunction(truthValue, otherJudgment.getTruthValue()).computeRevision())
+            .build());
   }
 
   @Override
   public List<Inference> reason(double evidentialHorizon)
   {
-    final List<Inference> inferences = new ArrayList<>();
-
-    termImpl.computeInferences(truthValueImpl, evidentialHorizon, inferences);
-
-    return inferences;
+    return ruleMachine.run(getStatement(),
+        new TruthValueFunction(getTruthValue(), evidentialHorizon));
   }
 
   @Override
@@ -219,11 +143,7 @@ final class JudgmentImpl extends AbstractSentence implements Judgment
   {
     checkNotNull(otherJudgment, "otherJudgment");
 
-    final List<Inference> inferences = new ArrayList<>();
-
-    termImpl.computeInferences(truthValueImpl, wrap(otherJudgment.getStatement()),
-        wrap(otherJudgment.getTruthValue()), evidentialHorizon, inferences);
-
-    return inferences;
+    return ruleMachine.run(getStatement(), otherJudgment.getStatement(), new BiTruthValueFunction(
+        getTruthValue(), otherJudgment.getTruthValue(), evidentialHorizon));
   }
 }

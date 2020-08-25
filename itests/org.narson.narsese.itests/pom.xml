@@ -13,6 +13,6 @@
 	<artifactId>org.narson.narsese.itests</artifactId>
 
 	<name>Narson :: Integration Tests :: Narsese</name>
- <description>This bundles tests functionalities related to the Narsese language object model, 
+	<description>This bundles tests functionalities related to the Narsese language object model, 
   the Reader/Writer and the Parser/Generator services.</description>
-</project>
+</project> 

@@ -1,4 +1,4 @@
-package org.narson.narsese.provider.util;
+package org.narson.narsese.provider.rules;
 
 import java.util.function.Function;
 import org.narson.api.narsese.Narsese;
@@ -18,13 +18,14 @@ final public class TermPatterns
 
   public TermPattern compile(String pattern, String resultPattern)
   {
-    return new TermPattern(nf, reading.apply(pattern + ".").getStatement(),
-        reading.apply(resultPattern + ".").getStatement());
+    return new TermPattern(nf, reading.apply("(" + pattern + ").").getStatement(),
+        reading.apply("(" + resultPattern + ").").getStatement());
   }
 
-  public TermPattern compile(String pattern1, String pattern2, String resultPattern)
+  public BiTermPattern compile(String pattern, String otherPattern, String resultPattern)
   {
-    return new TermPattern(nf, reading.apply(pattern1 + ".").getStatement(),
+    return new BiTermPattern(nf, reading.apply(pattern + ".").getStatement(),
+        reading.apply(otherPattern + ".").getStatement(),
         reading.apply(resultPattern + ".").getStatement());
   }
 }

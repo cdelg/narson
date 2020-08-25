@@ -28,6 +28,8 @@ import org.narson.api.narsese.SetTermBuilder;
 import org.narson.api.narsese.Tense;
 import org.narson.api.narsese.Term;
 import org.narson.api.narsese.TruthValue;
+import org.narson.narsese.provider.rules.RuleMachine;
+import org.narson.narsese.provider.rules.RuleMachines;
 import org.narson.narsese.provider.util.WordHelper;
 
 final public class NarseseFactoryImpl implements NarseseFactory
@@ -35,6 +37,7 @@ final public class NarseseFactoryImpl implements NarseseFactory
   private final Narsese narsese;
   private final TruthValue defaultTruthValue;
   private final TruthValue defaultDesireValue;
+  private final RuleMachine ruleMachine;
 
   public NarseseFactoryImpl(Narsese narsese, double defaultTruthFrequency,
       double defaultTruthConfidence, double defaultDesireFrequency, double defaultDesireConfidence)
@@ -42,13 +45,14 @@ final public class NarseseFactoryImpl implements NarseseFactory
     this.narsese = narsese;
     defaultTruthValue = new TruthValueImpl(defaultTruthFrequency, defaultTruthConfidence);
     defaultDesireValue = new TruthValueImpl(defaultDesireFrequency, defaultDesireConfidence);
+    ruleMachine = RuleMachines.createMachine(narsese);
   }
 
   @Override
   public JudgmentBuilder judgment(Term statement)
   {
     checkNotNull(statement, "statement");
-    return new JudgmentBuilderImpl(narsese, statement, defaultTruthValue);
+    return new JudgmentBuilderImpl(narsese, ruleMachine, statement, defaultTruthValue);
   }
 
   @Override
@@ -92,19 +96,19 @@ final public class NarseseFactoryImpl implements NarseseFactory
     {
       if (copula.isFirstOrder())
       {
-        return new SimilarityCopulaTerm(narsese, subject, predicate, Tense.NONE);
+        return new CopulaTermImpl(narsese, subject, Copula.SIMILARITY, predicate, Tense.NONE);
       } else
       {
-        return new EquivalenceCopulaTerm(narsese, subject, predicate, Tense.NONE);
+        return new CopulaTermImpl(narsese, subject, Copula.EQUIVALENCE, predicate, Tense.NONE);
       }
     } else
     {
       if (copula.isFirstOrder())
       {
-        return new InheritanceCopulaTerm(narsese, subject, predicate, Tense.NONE);
+        return new CopulaTermImpl(narsese, subject, Copula.INHERITANCE, predicate, Tense.NONE);
       } else
       {
-        return new ImplicationCopulaTerm(narsese, subject, predicate, Tense.NONE);
+        return new CopulaTermImpl(narsese, subject, Copula.IMPLICATION, predicate, Tense.NONE);
       }
     }
   }
@@ -119,25 +123,25 @@ final public class NarseseFactoryImpl implements NarseseFactory
     switch (copula)
     {
       case INSTANCE:
-        return new InheritanceCopulaTerm(narsese,
-            set(SetConnector.EXTENSIONAL_SET).of(subject).build(), predicate, Tense.NONE);
+        return new CopulaTermImpl(narsese, set(SetConnector.EXTENSIONAL_SET).of(subject).build(),
+            Copula.INHERITANCE, predicate, Tense.NONE);
       case INSTANCE_PROPERTY:
-        return new InheritanceCopulaTerm(narsese,
-            set(SetConnector.EXTENSIONAL_SET).of(subject).build(),
-            set(SetConnector.INTENSIONAL_SET).of(predicate).build(), Tense.NONE);
+        return new CopulaTermImpl(narsese, set(SetConnector.EXTENSIONAL_SET).of(subject).build(),
+            Copula.INHERITANCE, set(SetConnector.INTENSIONAL_SET).of(predicate).build(),
+            Tense.NONE);
       case PROPERTY:
-        return new InheritanceCopulaTerm(narsese, subject,
+        return new CopulaTermImpl(narsese, subject, Copula.INHERITANCE,
             set(SetConnector.INTENSIONAL_SET).of(predicate).build(), Tense.NONE);
       case CONCURRENT_EQUIVALENCE:
-        return new EquivalenceCopulaTerm(narsese, subject, predicate, Tense.PRESENT);
+        return new CopulaTermImpl(narsese, subject, Copula.EQUIVALENCE, predicate, Tense.PRESENT);
       case CONCURRENT_IMPLICATION:
-        return new ImplicationCopulaTerm(narsese, subject, predicate, Tense.PRESENT);
+        return new CopulaTermImpl(narsese, subject, Copula.IMPLICATION, predicate, Tense.PRESENT);
       case PREDICTIVE_EQUIVALENCE:
-        return new EquivalenceCopulaTerm(narsese, subject, predicate, Tense.FUTURE);
+        return new CopulaTermImpl(narsese, subject, Copula.EQUIVALENCE, predicate, Tense.FUTURE);
       case PREDICTIVE_IMPLICATION:
-        return new ImplicationCopulaTerm(narsese, subject, predicate, Tense.FUTURE);
+        return new CopulaTermImpl(narsese, subject, Copula.IMPLICATION, predicate, Tense.FUTURE);
       case RETROSPECTIVE_IMPLICATION:
-        return new ImplicationCopulaTerm(narsese, subject, predicate, Tense.PAST);
+        return new CopulaTermImpl(narsese, subject, Copula.IMPLICATION, predicate, Tense.PAST);
       default:
         throw new IllegalArgumentException("Unknow copula.");
     }

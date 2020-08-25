@@ -1,14 +1,12 @@
 package org.narson.narsese.provider.model;
 
 import static org.narson.tools.PredChecker.checkArgument;
-import java.util.List;
 import org.narson.api.narsese.CompoundTerm;
 import org.narson.api.narsese.ConstantTerm;
 import org.narson.api.narsese.CopulaTerm;
 import org.narson.api.narsese.DependentVariable;
 import org.narson.api.narsese.ImageTerm;
 import org.narson.api.narsese.IndependentVariable;
-import org.narson.api.narsese.Inference;
 import org.narson.api.narsese.Narsese;
 import org.narson.api.narsese.NegationTerm;
 import org.narson.api.narsese.OperationTerm;
@@ -169,39 +167,5 @@ abstract class AbstractTerm extends AbstractNarseseValue implements Term
     {
       throw new IllegalStateException("This term is not a query variable.");
     }
-  }
-
-  public void computeInferences(TruthValueImpl truthValue, double evidentialHorizon,
-      List<Inference> inferences)
-  {
-    /* Immediate Negation rule {S} |- !S */
-    inferences.add(new DefaultInference(Inference.Type.IMMEDIATE_NEGATION,
-        nf.judgment(nf.negation(this)).truthValue(truthValue.computeNegation()).build()));
-  }
-
-  public void computeInferences(TruthValueImpl truthValue, Term otherTerm,
-      TruthValueImpl otherTruthValue, double evidentialHorizon, List<Inference> inferences)
-  {
-    // Nothing to do
-    // TODO
-    /*
-     * Higher order conditional strong compositional rules (must have different evidential base and
-     * additional condition???? TODO)
-     */
-    // ruleMachine.addRule("P.", "S.", "(P && S).",
-    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_INTERSECTION, false);
-    // ruleMachine.addRule("P.", "S.", "(P || S).",
-    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_UNION,
-    // false);
-
-    /*
-     * Higher order conditional weak compositional rules (must have different evidential base and
-     * additional condition???? TODO)
-     */
-    // ruleMachine.addRule("P.", "S.", "(S==>P).",
-    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_INDUCTION, false);
-    // ruleMachine.addRule("P.", "S.", "(S<=>P).",
-    // InferenceBB.Type.CONDITIONAL_COMPOSITIONAL_COMPARISON, false);
-
   }
 }
